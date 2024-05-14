@@ -4,22 +4,29 @@
 
 // main fuggveny
 int main() {
-  kisbolt coop;
-  coop.adatok_betoltese();
-  try {
-    coop.binaris_arukereso("Garden Shears Sharpener");
-  } 
-  catch (std::string s) {
-    std::cerr << "string error: " << s;
-  } 
-  catch (int e) {
-    std::cerr << "int error" << e;
-  }
-  catch (...) {
-    std::cerr << "other error";
-  }
-  
 
+  // std::cerr<<"PROGRAM STARTS\n";
+  kisbolt coop;
+  // std::cerr <<"init class\n";
+  coop.adatok_betoltese();
+  // std::cerr << "load data\n";
+
+  
+  // try {
+  //   coop.specifikus_arucikk_listazasa("Garden Gnome");         
+  // } 
+  // catch (std::string s) {
+    // std::cerr << "string error: " << s;
+  // } 
+  // catch (int e) {
+    // std::cerr << "int error" << e;
+  // }
+  // catch (...) {
+    // std::cerr << "other error";
+  // }
+
+  coop.specifikus_arucikk_listazasa("Garden Gnome");
+  // std::cerr<<"found query\n";
    
   return 0;
 }

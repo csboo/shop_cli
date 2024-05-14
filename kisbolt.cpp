@@ -16,11 +16,12 @@ void kisbolt::arucikk_torlese(std::string name) {
   this->arucikkek.erase(this->arucikkek.begin() + this->binaris_arukereso(name));
 }
 
-int kisbolt::binaris_arukereso(std::string keresett_aru) {
+int kisbolt::binaris_arukereso(std::string &keresett_aru) {
   int index = -1;
   int begin = 0, end = this->arucikkek.size() - 1, mid = 0;
+  // std::cerr << "start while for search\n";
   while (begin <= end && index == -1) {
-    mid = (begin+end)/2;
+    mid = begin+(end-begin)/2;
     
     if(this->arucikkek.at(mid).get_name() == keresett_aru){
       index = mid;
@@ -30,11 +31,13 @@ int kisbolt::binaris_arukereso(std::string keresett_aru) {
       end = mid - 1;
     }
   }
+  // std::cerr<<"end while for search, index : " << index << "\n";
+
+  // if(this->arucikkek.at(index).get_name() != keresett_aru){
+    // std::cerr << "nicsmeg";
+  // }
   
-  if (index == -1)
-    throw "product_not_found"; 
-  else
-    return index;
+  return index;
 }
 
 void kisbolt::eladas(std::string mibol, unsigned int mennyit) {
@@ -63,8 +66,9 @@ void kisbolt::arucikkek_listazasa() {
 }
 
 void kisbolt::specifikus_arucikk_listazasa(std::string name) {
-  std::cout << "\n\n\n";
+  // std::cerr << this->arucikkek.size() << "\n";
   arucikk keresett = this->arucikkek.at(this->binaris_arukereso(name));
+  // std::cerr << "keresve\n";
   std::cout << keresett.get_name() << " - " << keresett.get_price()
             << "Ft,\tRaktaron: " << keresett.get_instock() << " db\n";
 }
@@ -79,17 +83,19 @@ void kisbolt::adatok_betoltese() {
   std::string name;
   double price = 0;
   unsigned int instock = 0;
+  // std::cerr << "while start\n";
   while (getline(fin, name)) {
     fin >> price;
     fin >> instock;
+    name.pop_back(); //egy franya space karaktert ki kell szedni :/
+    this->arucikkek.push_back(arucikk(name, price, instock));
     fin.get(); // a sorvegi "\n" karaktert eldobja, hogy a kovetkezo iteracioban
                // a getline a kovetkezo sor vegeig olvasson be
     fin.get(); // a termekek kozotti ures sor kihagyasa miatt kell
-
-    this->arucikkek.push_back(arucikk(name, price, instock));
   }
-
+  // std::cerr << "while done\n";
   fin.close();
+  // std::cerr << "function load end\n";
 }
 void kisbolt::adatok_mentese() {
   std::ofstream fout("raktar.txt");
