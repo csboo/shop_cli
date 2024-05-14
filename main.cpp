@@ -1,19 +1,19 @@
-#include "arucikk.h"
-#include "kisbolt.h"
+#include "product.h"
+#include "shop.h"
 #include <iostream>
 
-// main fuggveny
+// main function
 int main() {
 
   // std::cerr<<"PROGRAM STARTS\n";
-  kisbolt coop;
+  shop coop;
   // std::cerr <<"init class\n";
-  coop.adatok_betoltese();
+  coop.load_data();
   // std::cerr << "load data\n";
 
   
   // try {
-  //   coop.specifikus_arucikk_listazasa("Garden Gnome");         
+  //   coop.list_specific_product("Garden Gnome");         
   // } 
   // catch (std::string s) {
     // std::cerr << "string error: " << s;
@@ -25,7 +25,7 @@ int main() {
     // std::cerr << "other error";
   // }
 
-  coop.specifikus_arucikk_listazasa("Garden Gnome");
+  coop.list_specific_product("Garden Gnome");
   // std::cerr<<"found query\n";
    
   return 0;
