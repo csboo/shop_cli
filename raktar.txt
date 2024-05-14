@@ -1,0 +1,399 @@
+Garden Hoe
+25
+12
+
+Flower Seeds Packet
+5
+8
+
+Hand Trowel
+10
+15
+
+Pruning Shears
+15
+10
+
+Watering Can
+20
+18
+
+Plant Pot
+8
+7
+
+Garden Gloves
+12
+13
+
+Garden Rake
+18
+9
+
+Fertilizer
+30
+6
+
+Hedge Trimmer
+40
+4
+
+Garden Sprayer
+25
+11
+
+Mulch
+5
+14
+
+Bulb Planter
+7
+16
+
+Garden Cart
+50
+3
+
+Garden Hose
+35
+5
+
+Weed Puller
+10
+17
+
+Garden Fork
+20
+10
+
+Plant Labels
+3
+19
+
+Garden Scissors
+8
+12
+
+Compost Bin
+30
+8
+
+Garden Kneeler
+15
+6
+
+Solar Garden Lights
+25
+9
+
+Seedling Heat Mat
+20
+11
+
+Garden Tool Set
+40
+7
+
+Rain Barrel
+60
+2
+
+Garden Sprinkler
+15
+13
+
+Plant Support Rings
+5
+16
+
+Bird Feeder
+12
+5
+
+Garden Shovel
+18
+14
+
+Insecticide Spray
+8
+9
+
+Garden Gnome
+20
+12
+
+Grafting Knife
+10
+8
+
+Butterfly House
+25
+6
+
+Garden Seeder
+30
+10
+
+Soil pH Meter
+15
+4
+
+Garden Twine
+5
+15
+
+Plant Watering Spikes
+7
+11
+
+Garden Sprinkler Timer
+40
+3
+
+Rose Pruning Gloves
+12
+8
+
+Garden Trellis
+20
+9
+
+Plant Protection Cover
+25
+7
+
+Garden Tiller
+50
+5
+
+Potting Bench
+30
+6
+
+Gopher Trap
+15
+10
+
+Garden Netting
+12
+12
+
+Plant Mister
+8
+13
+
+Seed Starter Tray
+5
+15
+
+Garden Tool Organizer
+20
+9
+
+Garden Sickle
+10
+11
+
+Rooting Hormone
+7
+7
+
+Plant Propagation Kit
+25
+4
+
+Garden Edging
+15
+8
+
+Garden Pond Kit
+100
+3
+
+Garden Sprayer Wand
+10
+6
+
+Plant Caddy
+15
+11
+
+Garden Soil
+20
+9
+
+Bird Bath
+35
+5
+
+Garden Cultivator
+18
+14
+
+Plant Hanger
+8
+12
+
+Garden Trowel Set
+25
+7
+
+Watering Wand
+12
+10
+
+Garden Tool Belt
+15
+8
+
+Planting Auger
+10
+9
+
+Garden Pest Repeller
+20
+6
+
+Garden Shears Set
+30
+5
+
+Pruning Saw
+15
+11
+
+Garden Fence
+40
+4
+
+Garden Dibber
+8
+7
+
+Plant Pot Saucer
+5
+13
+
+Garden Seeder Tool
+20
+9
+
+Soil Aeration Tool
+12
+11
+
+Garden Insect Killer
+25
+6
+
+Planting Mat
+10
+8
+
+Garden Stake
+5
+12
+
+Plant Frost Protection
+15
+7
+
+Garden Tool Rack
+20
+9
+
+Plant Watering Can
+10
+10
+
+Garden Hose Reel
+30
+5
+
+Garden Spade
+18
+13
+
+Plant Dolly
+15
+8
+
+Garden Tool Sharpener
+10
+6
+
+Plant Watering System
+25
+4
+
+Garden Tiller Attachment
+50
+3
+
+Garden Fork and Trowel Set
+20
+7
+
+Garden Potting Table
+40
+5
+
+Garden Dustbin
+15
+11
+
+Planting Bag
+8
+9
+
+Garden Hose Nozzle
+12
+6
+
+Garden Cart Wheelbarrow
+60
+4
+
+Plant Pot Tray
+5
+10
+
+Garden Hose Adapter
+7
+8
+
+Plant Pruning Scissors
+10
+11
+
+Garden Watering Wand
+18
+5
+
+Plant Pot Holder
+15
+9
+
+Garden Tool Hanger
+8
+12
+
+Plant Pot Rack
+20
+7
+
+Garden Hose Connector
+10
+6
+
+Plant Pot Stand
+12
+8
+
+Garden Shears Sharpener
+15
+10
+
+Plant Pot Stands Outdoor
+25
+4

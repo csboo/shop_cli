@@ -1,0 +1,100 @@
+Bird Bath 35 5
+Bird Feeder 12 5
+Bulb Planter 7 16
+Butterfly House 25 6
+Compost Bin 30 8
+Fertilizer 30 6
+Flower Seeds Packet 5 8
+Garden Cart 50 3
+Garden Cart Wheelbarrow 60 4
+Garden Cultivator 18 14
+Garden Dibber 8 7
+Garden Dustbin 15 11
+Garden Edging 15 8
+Garden Fence 40 4
+Garden Fork 20 10
+Garden Fork and Trowel Set 20 7
+Garden Gloves 12 13
+Garden Gnome 20 12
+Garden Hoe 25 12
+Garden Hose 35 5
+Garden Hose Adapter 7 8
+Garden Hose Connector 10 6
+Garden Hose Nozzle 12 6
+Garden Hose Reel 30 5
+Garden Insect Killer 25 6
+Garden Kneeler 15 6
+Garden Netting 12 12
+Garden Pest Repeller 20 6
+Garden Pond Kit 100 3
+Garden Potting Table 40 5
+Garden Rake 18 9
+Garden Scissors 8 12
+Garden Seeder 30 10
+Garden Seeder Tool 20 9
+Garden Shears Set 30 5
+Garden Shears Sharpener 15 10
+Garden Shovel 18 14
+Garden Sickle 10 11
+Garden Soil 20 9
+Garden Spade 18 13
+Garden Sprayer 25 11
+Garden Sprayer Wand 10 6
+Garden Sprinkler 15 13
+Garden Sprinkler Timer 40 3
+Garden Stake 5 12
+Garden Tiller 50 5
+Garden Tiller Attachment 50 3
+Garden Tool Belt 15 8
+Garden Tool Hanger 8 12
+Garden Tool Organizer 20 9
+Garden Tool Rack 20 9
+Garden Tool Set 40 7
+Garden Tool Sharpener 10 6
+Garden Trellis 20 9
+Garden Trowel Set 25 7
+Garden Twine 5 15
+Garden Watering Wand 18 5
+Gopher Trap 15 10
+Grafting Knife 10 8
+Hand Trowel 10 15
+Hedge Trimmer 40 4
+Insecticide Spray 8 9
+Mulch 5 14
+Plant Caddy 15 11
+Plant Dolly 15 8
+Plant Frost Protection 15 7
+Plant Hanger 8 12
+Plant Labels 3 19
+Plant Mister 8 13
+Plant Pot 8 7
+Plant Pot Holder 15 9
+Plant Pot Rack 20 7
+Plant Pot Saucer 5 13
+Plant Pot Stand 12 8
+Plant Pot Stands Outdoor 25 4
+Plant Pot Tray 5 10
+Plant Propagation Kit 25 4
+Plant Protection Cover 25 7
+Plant Pruning Scissors 10 11
+Plant Support Rings 5 16
+Plant Watering Can 10 10
+Plant Watering Spikes 7 11
+Plant Watering System 25 4
+Planting Auger 10 9
+Planting Bag 8 9
+Planting Mat 10 8
+Potting Bench 30 6
+Pruning Saw 15 11
+Pruning Shears 15 10
+Rain Barrel 60 2
+Rooting Hormone 7 7
+Rose Pruning Gloves 12 8
+Seed Starter Tray 5 15
+Seedling Heat Mat 20 11
+Soil Aeration Tool 12 11
+Soil pH Meter 15 4
+Solar Garden Lights 25 9
+Watering Can 20 18
+Watering Wand 12 10
+Weed Puller 10 17
