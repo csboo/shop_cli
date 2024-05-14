@@ -14,14 +14,17 @@ class kisbolt{
     
     void arucikkek_listazasa();
     void specifikus_arucikk_listazasa(std::string name);
+
+    void adatok_betoltese();
+    void adatok_mentese();
     
     //getters
     std::vector<arucikk> get_arucikkek(){return this->arucikkek;}
     //setters
     void set_arucikkek(std::vector<arucikk> arucikkek){this->arucikkek = arucikkek;}
 
-  
-
+    
+    
   private:
     std::vector<arucikk> arucikkek; //a bolt arucikkeit tartalmazo vektor
     
