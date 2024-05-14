@@ -5,7 +5,7 @@
 
 class kisbolt{
   public:
-    kisbolt();
+    kisbolt() = default;
     void arucikk_hozzaadas(std::string name, double price, unsigned int instock);
     void arucikk_torlese(std::string name);
     void eladas(std::string mibol, unsigned int mennyit);

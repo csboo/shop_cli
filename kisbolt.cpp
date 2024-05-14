@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-kisbolt::kisbolt() { this->adatok_betoltese(); }
+// kisbolt::kisbolt() { this->set_arucikkek(adatok_betoltese()); }
 
 void kisbolt::arucikk_hozzaadas(std::string name, double price,
                                 unsigned int instock) {
@@ -74,6 +74,7 @@ void kisbolt::specifikus_arucikk_listazasa(std::string name) {
 }
 
 void kisbolt::adatok_betoltese() {
+  std::cerr << "initing...\n";
   std::ifstream fin("raktar.txt");
   if (!fin.is_open()) {
     throw "404";
@@ -82,14 +83,13 @@ void kisbolt::adatok_betoltese() {
   std::string name;
   double price = 0;
   unsigned int instock = 0;
-
-  for (auto i : this->arucikkek) {
-    getline(fin, name);
+  while (getline(fin, name)) {
     fin >> price;
     fin >> instock;
-    i.set_name(name);
-    i.set_price(price);
-    i.set_instock(instock);
+    fin.get();  // a sorvegi "\n" karaktert eldobja, hogy a kovetkezo iteracioban
+                // a getline a kovetkezo sor vegeig olvasson be
+
+    this->arucikkek.push_back(arucikk(name, price, instock));
   }
 
   fin.close();

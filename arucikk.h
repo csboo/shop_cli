@@ -4,7 +4,7 @@
 //arucikk osztaly definialasa
 class arucikk{
   public:
-    arucikk(std::string&, double&, unsigned int&);
+    arucikk(std::string name = "", double price = 0, unsigned int instock = 0);
     //getters
     std::string get_name(){return this->name;}
     double get_price(){return this->price;}
