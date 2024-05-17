@@ -1,6 +1,7 @@
 #include "product.h"
 #include "shop.h"
 #include <iostream>
+#include <string>
 
 // main function
 int main() {
@@ -10,6 +11,7 @@ int main() {
   // std::cerr <<"init class\n";
   coop.load_data();
   // std::cerr << "load data\n";
+
 
   
   // try {
@@ -25,7 +27,9 @@ int main() {
     // std::cerr << "other error";
   // }
 
-  coop.list_specific_product("Garden Gnome");
+  std::string name="garden gnome";
+  coop.list_specific_product(name);
+  std::cout << coop.get_products().at(coop. binary_search_product_index(name)).get_price();
   // std::cerr<<"found query\n";
    
   return 0;
