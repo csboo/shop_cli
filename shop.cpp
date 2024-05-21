@@ -1,5 +1,6 @@
 #include "shop.h"
 #include "product.h"
+#include "tools.h"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -11,9 +12,10 @@ int shop::binary_search_product_index(std::string &wanted_product) {
     while (begin <= end && index == -1) {
         mid = begin + (end - begin) / 2;
 
-        if (this->products.at(mid).get_name() == wanted_product) {
+        if (sajat_to_lower(this->products.at(mid).get_name()) ==
+            sajat_to_lower(wanted_product)) {
             index = mid;
-        } else if (wanted_product > this->products.at(mid).get_name()) {
+        } else if (sajat_to_lower(wanted_product) > sajat_to_lower(this->products.at(mid).get_name())) {
             begin = mid + 1;
         } else {
             end = mid - 1;
@@ -52,7 +54,7 @@ void shop::list_products() {
 }
 
 void shop::list_specific_product(std::string &name) {
-    // std::cerr << this->products.size() << "\n";
+    // std::cerr << "before binary search\n";
     product wanted_product =
         this->products.at(this->binary_search_product_index(name));
     // std::cerr << "found\n";
