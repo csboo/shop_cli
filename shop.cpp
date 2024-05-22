@@ -1,37 +1,18 @@
 #include "shop.h"
 #include "product.h"
 #include "tools.h"
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-int shop::binary_search_product_index(std::string &wanted_product) {
-    int index = -1;
-    int begin = 0, end = this->products.size() - 1, mid = 0;
-    // std::cerr << "start while for search\n";
-    while (begin <= end && index == -1) {
-        mid = begin + (end - begin) / 2;
-
-        if (sajat_to_lower(this->products.at(mid).get_name()) ==
-            sajat_to_lower(wanted_product)) {
-            index = mid;
-        } else if (sajat_to_lower(wanted_product) > sajat_to_lower(this->products.at(mid).get_name())) {
-            begin = mid + 1;
-        } else {
-            end = mid - 1;
-        }
-    }
-    // std::cerr<<"end while for search, index : " << index << "\n";
-
-    return index;
-}
+#include <vector>
 
 void shop::sell(std::string from, unsigned int amount) {
     this->products.at(this->binary_search_product_index(from))
         .set_instock(this->products.at(this->binary_search_product_index(from))
                          .get_instock() -
                      amount);
-    // we look for the product in the vector with the binary search method
+    // we look for the product in the vector with the this->binary search method
     // than we set the instock amount to the difference of the current value and
     // the sold amount
 }
@@ -40,9 +21,20 @@ void shop::restock(std::string from, unsigned int amount) {
         .set_instock(this->products.at(this->binary_search_product_index(from))
                          .get_instock() +
                      amount);
-    // we look for the product in the vector with the binary search method
+    // we look for the product in the vector with the this->binary search method
     // than set the instock amount to the sum of the current value and the
     // restocked amount
+}
+
+/// "Láttátok mit csináltam?"
+void shop::add_product(const std::string& name, double price, unsigned int instock) {
+     // finds the value `name` in `products` vector, lowerbound position of name
+    std::vector<product>::iterator iter =
+        std::lower_bound(this->products.begin(), this->products.end(), sajat_to_lower(name),
+                         [](const product& p, const std::string &name) {
+                             return sajat_to_lower(p.get_name()) < sajat_to_lower(name);
+                         });
+    this->products.insert(iter, product(name, price, instock));
 }
 
 void shop::list_products() {
@@ -54,7 +46,7 @@ void shop::list_products() {
 }
 
 void shop::list_specific_product(std::string &name) {
-    // std::cerr << "before binary search\n";
+    // std::cerr << "before this->binary search\n";
     product wanted_product =
         this->products.at(this->binary_search_product_index(name));
     // std::cerr << "found\n";
@@ -86,8 +78,14 @@ void shop::load_data() {
     // std::cerr << "while done\n";
     fin.close();
     // std::cerr << "function load end\n";
+    this->sort_products_by_name();
 }
 void shop::save_data() {
+    // this->sort_products_by_name();
+    // We don't have to sort here, because
+    // 1) the vector should be sorted already, and
+    // 2) the loader function will sort anyways
+
     std::ofstream fout("storage.txt");
     if (!fout.is_open()) {
         throw 404;

@@ -1,15 +1,12 @@
+#pragma once
 #include "product.h"
 #include <cstdlib>
 #include <vector>
-#pragma once
 
 class shop {
 public:
   shop() = default;
-  inline void add_product(std::string name, double price,
-                          unsigned int instock) {
-    this->products.push_back(product(name, price, instock));
-  }
+  void add_product(const std::string& name, double price, unsigned int instock);
   inline void delete_product(std::string name) {
     this->products.erase(this->products.begin() +
                          this->binary_search_product_index(name));
@@ -19,6 +16,7 @@ public:
 
   void list_products();
   void list_specific_product(std::string &name);
+  void sort_products_by_name();
   int binary_search_product_index(std::string &keresett_aru);
 
   void load_data();
