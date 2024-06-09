@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include "shop.h"
 
@@ -46,4 +48,13 @@ void shop::sort_products_by_name() {
         }
         std::swap(this->products.at(i), this->products.at(min));
     }
+}
+void print_log(std::string text){
+    std::ofstream fout("log.txt", std::ios::app);
+    fout << text << "\n";
+    fout.close();
+}
+void reset_log(){
+    std::ofstream fout("log.txt");
+    fout.close();
 }
