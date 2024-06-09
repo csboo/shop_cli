@@ -51,11 +51,11 @@ std::vector<std::string> init_menu(std::vector<std::string> &v){
     return v;
 }
 std::string read_rsp(std::string &rsp){
-    input input;
+    input in;
     tui::cursor::visible(true);
-    while (input.get_state() == input::States::Enter) {
-        std::cin.get(c);
-        switch (c) {
+    while (in.get_state() != input::States::Enter) {
+        in.get();
+        switch (in.value()) {
         case 127:
             if (rsp.size() > 0) {
                 // tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - rsp.size());
@@ -65,24 +65,8 @@ std::string read_rsp(std::string &rsp){
             continue;
         case 13:
             continue;
-        case 27:
-            switch (as_arrow(c)) {
-            default:
-                continue;
-            }
-            break;
         default: 
-            rsp.push_back(c);
-            // if (rsp.size() > 0) {
-                // if (rsp.size() % 2 == 1) {
-                    // tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - rsp.size());
-                    // tui::screen::clear_line_right();
-                // } else {
-                    // tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - rsp.size() - 1);
-                    // tui::screen::clear_line_right();
-                // }
-            // }
-            // rsp.push_back(c);
+            rsp.push_back(in.value());
             break;
         }
         if (rsp.size() > 0) {
