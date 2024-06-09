@@ -82,21 +82,27 @@ std::string read_rsp(std::string &rsp){
     }
     return rsp;  
 }
-input::Arrows is_arrow (char &x){
+input::Arrows input::is_arrow (char &x){
     if(x == 27 && std::cin.peek() == 91) {
         std::cin.ignore();
-        // auto arrow = std::cin.get();
         switch (std::cin.peek()) {
         case 65:
+            std::cin.ignore();
             return input::Arrows::Up;
         case 66:
+            std::cin.ignore();
             return input::Arrows::Down;
         case 67:
+            std::cin.ignore();
             return input::Arrows::Right;
         case 68:
+            std::cin.ignore();
             return input::Arrows::Left;
         default:
-            std::cin.ignore(3);
+            std::cin.ignore();
+            std::cin.ignore();
+            std::cin.ignore();
+            std::cin.ignore();
             return input::Arrows::Ctrl;
         }
     } else {    
@@ -110,19 +116,39 @@ void input::get(){
         this->state = this->States::Quit;
         return;
     }
-    if (is_arrow(this->opt) != Arrows::None){
+    switch (this->is_arrow(this->opt)){
+    case input::Arrows::Up:
         this->state = this->States::Arrow;
+        this->arrow_state = input::Arrows::Up;
         return;
-    } else if (this->opt == 13){
-        this->state = this->States::Enter;
+    case input::Arrows::Down:
+        this->state = this->States::Arrow;
+        this->arrow_state = input::Arrows::Down;
         return;
-    } else if (this->opt < 0){
-        this->state = this->States::Bad;
-        this->opt = '\0';
-        std::cin.clear();
+    case input::Arrows::Left:
+        this->state = this->States::Arrow;
+        this->arrow_state = input::Arrows::Left;
         return;
-    } else {
-        this->state = this->States::Default;
+    case input::Arrows::Right:
+        this->state = this->States::Arrow;
+        this->arrow_state = input::Arrows::Right;
         return;
+    case input::Arrows::Ctrl:
+        this->state = this->States::Arrow;
+        this->arrow_state = input::Arrows::Ctrl;
+        return;
+    case input::Arrows::None:
+        if (this->opt == 13){
+            this->state = this->States::Enter;
+            return;
+        } else if (this->opt < 0){
+            this->state = this->States::Bad;
+            this->opt = '\0';
+            std::cin.clear();
+            return;
+        } else {
+            this->state = this->States::Default;
+            return;
+        }
     }
 }
