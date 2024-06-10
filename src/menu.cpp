@@ -1,6 +1,5 @@
 #include "menu.h"
 #include "external/cpptui/tui.hpp"
-#include "tools.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -23,14 +22,13 @@ void printmenu(std::vector<std::string> &menu, int invert){
 void print_msg(std::string text, std::pair<unsigned, unsigned> coords, bool save_cursor){
     if (!save_cursor) {
         tui::cursor::set_position(coords.first, coords.second);
-        std::cout << '\t' << text; 
+        std::cout << text; 
         return;
     }
     std::pair<unsigned, unsigned> pos = tui::cursor::get_position();
     tui::cursor::set_position(coords.first, coords.second);
-    std::cout << '\t' << text; 
+    std::cout << text; 
     tui::cursor::set_position(pos);
-    
 }
 void clear_msg(){
     std::pair<unsigned, unsigned> pos = tui::cursor::get_position();
@@ -56,32 +54,24 @@ std::string read_rsp(std::string &rsp){
     tui::cursor::visible(true);
     while (in.get_state() != input::States::Enter) {
         in.get();
-        switch (in.value()) {
-        case 127:
-            if (rsp.size() > 0) {
-                // tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - rsp.size());
+        switch (in.get_state()) {
+        case input::States::Arrow:
+        case input::States::Bad:
+        case input::States::Enter:
+            continue;
+        case input::States::Default:
+            if (in.value() != tui::chars::backspace){
+                rsp.push_back(in.value());
+            } else if (rsp.size() > 0){
+                tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second-1);
+                tui::screen::clear_line_right();
                 rsp.pop_back();
-                // std::cout << rsp;
             }
-            continue;
-        case 13:
-            continue;
-        default: 
-            rsp.push_back(in.value());
             break;
-        }
-        if (rsp.size() > 0) {
-            if (rsp.size() % 2 == 1) {
-                tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - rsp.size());
-                tui::screen::clear_line_right();
-            } else {
-                tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - rsp.size() - 1);
-                tui::screen::clear_line_right();
-            }
-        }
-        std::cout << rsp;
+        };
+        std::cout << tui::tui_string(in.value()).blue();
     }
-    return rsp;  
+    return rsp;
 }
 input::Arrows input::is_arrow (char &x){
     if(x == 27 && std::cin.peek() == 91) {
@@ -113,10 +103,6 @@ input::Arrows input::is_arrow (char &x){
 
 void input::get(){
     std::cin.get(this->opt);
-    if (this->opt == 'q') {
-        this->state = this->States::Quit;
-        return;
-    }
     switch (this->is_arrow(this->opt)){
     case input::Arrows::Up:
         this->state = this->States::Arrow;
@@ -139,7 +125,7 @@ void input::get(){
         this->arrow_state = input::Arrows::Ctrl;
         return;
     case input::Arrows::None:
-        if (this->opt == 13){
+        if (this->opt == tui::chars::enter){
             this->state = this->States::Enter;
             return;
         } else if (this->opt < 0){

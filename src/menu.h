@@ -17,7 +17,6 @@ public:
         Arrow = 1,
         Enter = 2,
         Bad = 3,
-        Quit = 4
     };
     input() = default;
     void get();
