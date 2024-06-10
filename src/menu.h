@@ -21,12 +21,14 @@ public:
     };
     input() = default;
     void get();
-    inline auto reset(){this->state = States::Default;this->opt = '0';this->arrow_state = Arrows::None;}
+    inline auto set(States state = States::Default, char val = '\0', Arrows arrow_state = Arrows::None){this->state = state;this->opt = val;this->arrow_state = arrow_state;}
+    //getters/setter
     inline auto get_state(){return this->state;}
-    inline void set_state(States state){this->state = state;}
-    inline auto value(){return this->opt;}
+    inline void switch_state(States state){this->state = state;}
+    inline auto value(){return this->opt;} //getter for this->value, but the name is more convinient this way
     inline void set_value(char val){this->opt = val;}
     inline auto get_arrow_state(){return this->arrow_state;}
+    void set_arrow_state(Arrows arrow_state){this->arrow_state = arrow_state;}
 private:  
     Arrows is_arrow(char &x);
 
@@ -40,4 +42,3 @@ void clear_msg();
 void printmenu(std::vector<std::string> &menu, int invert = 0);
 std::vector<std::string> init_menu(std::vector<std::string> &v);
 std::string read_rsp(std::string &rsp);
-
