@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "external/cpptui/tui.hpp"
+#include "tools.h"
 #include <iostream>
 #include <string>
 #include <vector>

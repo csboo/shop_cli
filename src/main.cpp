@@ -2,10 +2,8 @@
 #include "menu.h"
 #include "shop.h"
 #include "tools.h"
-#include <exception>
 #include <iostream>
 #include <string>
-#include <system_error>
 #include <unistd.h>
 #include <utility>
 #include <vector>
@@ -21,26 +19,29 @@ int main() {
 void run(shop &shop){
     reset_log();
     tui::init_term(false, true);
-    int error = 0;
     std::vector<std::string> menu;
     init_menu(menu);
     printmenu(menu);
-    // std::string name;
     input opt;
     int pos=0;
     int iter = 0;
     while (opt.get_state() != input::States::Quit){
-        print_log(concat("On: ", iter));
+        print_log(concat("On: ", iter++));
         opt.get();
         print_log(concat("opt was: '", int(opt.value()), "'" ));
         print_log(concat("state was: '", opt.get_state(), "'" ));
         clear_msg();
-        switch (opt.get_state()) {
-        case input::States::Quit:
-            continue;
-        case input::States::Bad:
-            continue;
-        case input::States::Arrow:
+        
+        if (opt.get_state() == input::States::Quit){
+            break;
+        }
+        if (opt.get_state() == input::States::Enter) {
+            opt.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at char(48), which is 0
+        } 
+        if (opt.get_state() == input::States::Bad) {
+            opt.set();
+        }
+        if(opt.get_state() == input::States::Arrow) {
             print_log(concat("Arrow detected, should be: ", opt.get_arrow_state()));
             switch (opt.get_arrow_state()) {
             case input::Arrows::Up:
@@ -49,29 +50,24 @@ void run(shop &shop){
                     pos = menu.size()-1;
                 }
                 printmenu(menu, pos);
+                opt.set();
                 continue;            
-
             case input::Arrows::Down:
                 print_log("Arrow down");
                 if (++pos == menu.size()) {
                     pos = 0;
                 }
                 printmenu(menu, pos);
+                opt.set();
                 continue;
             case input::Arrows::Left:
             case input::Arrows::Right:
+            case input::Arrows::Ctrl:
             default:
-                print_log(concat("On: ", iter, " Arrow NOT up NOR down"));
-                opt.reset();
-                opt.set_state(input::States::Default);
+                print_log(concat("On: ", iter, " Arrow, but NOT up NOR down"));
+                opt.set(input::States::Bad);
                 break;
-            }            
-        case input::States::Enter: 
-            opt.set_value(pos + 1 + 48); // -_-
-            opt.set_state(input::States::Default);
-            break;
-        case input::States::Default: 
-            break;
+            };
         }
         if(opt.get_state() == input::States::Default){
             tui::tui_string msg;
@@ -102,14 +98,14 @@ void run(shop &shop){
             case '7':
                 break;
             default:
-                std::pair<unsigned, unsigned> pos = tui::cursor::get_position();
-                tui::cursor::set_position(2, 1);
-                std::cout << tui::tui_string("\tHibas bemenet!").red() << "(" << ++error << "x)";
-                tui::cursor::set_position(pos);
-                continue;
-            }
-            error = 0;
+                opt.switch_state(input::States::Bad);
+                break;
+            };
         }
+        if (opt.get_state() == input::States::Bad) {
+            print_msg(tui::tui_string("Hibas bemenet!").red());
+            continue;
+        }   
     }
     tui::reset_term();
 }
