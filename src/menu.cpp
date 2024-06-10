@@ -38,13 +38,14 @@ void clear_msg(){
 }
 
 std::vector<std::string> init_menu(std::vector<std::string> &v){
-    v.push_back("\t1: Arucikk hozzaadasa\n\r");
-    v.push_back("\t2: Arucikk torlese\n\r");
-    v.push_back("\t3: Eladas\n\r");
-    v.push_back("\t4: Feltoltes\n\r");
-    v.push_back("\t5: Osszes arucikk listazasa\n\r");
-    v.push_back("\t6: Specifikus arucikk listazasa\n\r");
-    v.push_back("\t7: Mentes\n\r");
+    v.push_back("\t1: Add a product\n\r");
+    v.push_back("\t2: Delete a product\n\r");
+    v.push_back("\t3: Sell\n\r");
+    v.push_back("\t4: Restock\n\r");
+    v.push_back("\t5: List all\n\r");
+    v.push_back("\t6: List Specific product\n\r");
+    v.push_back("\t7: Save\n\r");
+    v.push_back("\t8: Load\n\r");
     v.push_back("\tq: Kilepes\n\r\n\r");
 
     return v;

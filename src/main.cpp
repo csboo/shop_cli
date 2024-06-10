@@ -9,15 +9,19 @@
 #include <utility>
 #include <vector>
 
-void run(shop &shop);
+void app(shop &shop);
 
 // main function
 int main() {
     shop shop;
-    run(shop);
+    app(shop);
     return 0;
 }
-void run(shop &shop){
+void app(shop &shop){
+    //TODO grouping code for simplicity, prompt_getstr && prompt_getint
+    //TODO more translation
+    //TODO pretty print formating, ESC to cancel anything
+    //TODO load on start, file name, overwrite support, dont save/load empty, CONFIRMATION Y/n style
     reset_log();
     tui::init_term(false, true);
     std::vector<std::string> menu;
@@ -27,10 +31,7 @@ void run(shop &shop){
     int pos=0;
     int iter = 0;
     while (opt.value() != 'q'){
-        print_log(concat("On: ", iter++));
         opt.get();
-        print_log(concat("opt was: '", int(opt.value()), "'" ));
-        print_log(concat("state was: '", opt.get_state(), "'" ));
         clear_msg();
         
         if (opt.get_state() == input::States::Bad) {
@@ -49,10 +50,8 @@ void run(shop &shop){
             opt.set(input::States::Arrow, '\0', input::Arrows::Right);
         }
         if(opt.get_state() == input::States::Arrow) {
-            print_log(concat("Arrow detected, should be: ", opt.get_arrow_state()));
             switch (opt.get_arrow_state()) {
             case input::Arrows::Up:
-                print_log("Arrow up");
                 if (--pos < 0) {
                     pos = menu.size()-1;
                 }
@@ -60,7 +59,6 @@ void run(shop &shop){
                 opt.set();
                 continue;            
             case input::Arrows::Down:
-                print_log("Arrow down");
                 if (++pos == menu.size()) {
                     pos = 0;
                 }
@@ -73,7 +71,6 @@ void run(shop &shop){
             case input::Arrows::Left:
             case input::Arrows::Ctrl:
             default:
-                print_log(concat("On: ", iter, " Arrow, but NOT up NOR down"));
                 opt.set(input::States::Bad);
                 break;
             };
@@ -227,10 +224,14 @@ void run(shop &shop){
                 printmenu(menu, pos);
                 break;
             case '7':
+                shop.save_data(); 
+                print_msg(tui::tui_string("\tFile saved successfully").green());
+                break;
+            case '8':
                 shop.load_data();
                 print_msg(tui::tui_string("\tFile loaded successfully").green());
                 break;
-            case '8':
+            case '9':
                 opt.set(input::States::Default, 'q');
                 continue;
             default:
