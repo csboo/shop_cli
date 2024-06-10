@@ -2,7 +2,6 @@
 #include "menu.h"
 #include "shop.h"
 #include "tools.h"
-#include <exception>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -34,11 +33,20 @@ void run(shop &shop){
         print_log(concat("state was: '", opt.get_state(), "'" ));
         clear_msg();
         
-        if (opt.get_state() == input::States::Enter) {
-            opt.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at char(48), which is 0
-        } 
         if (opt.get_state() == input::States::Bad) {
             opt.set();
+        }
+        if (opt.value() == 'k') {
+            opt.set(input::States::Arrow, '\0', input::Arrows::Up);
+        }
+        if (opt.value() == 'j') {
+            opt.set(input::States::Arrow, '\0', input::Arrows::Down);
+        }
+        if (opt.value() == 'h') {
+            opt.set(input::States::Arrow, '\0', input::Arrows::Left);
+        }
+        if (opt.value() == 'l') {
+            opt.set(input::States::Arrow, '\0', input::Arrows::Right);
         }
         if(opt.get_state() == input::States::Arrow) {
             print_log(concat("Arrow detected, should be: ", opt.get_arrow_state()));
@@ -59,8 +67,10 @@ void run(shop &shop){
                 printmenu(menu, pos);
                 opt.set();
                 continue;
-            case input::Arrows::Left:
             case input::Arrows::Right:
+                opt.switch_state(input::States::Enter);
+                break;
+            case input::Arrows::Left:
             case input::Arrows::Ctrl:
             default:
                 print_log(concat("On: ", iter, " Arrow, but NOT up NOR down"));
@@ -68,6 +78,9 @@ void run(shop &shop){
                 break;
             };
         }
+        if (opt.get_state() == input::States::Enter) {
+            opt.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at char(48), which is 0
+        } 
         if(opt.get_state() == input::States::Default){
             tui::tui_string msg;
             std::string str_rsp;
