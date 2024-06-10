@@ -1,4 +1,5 @@
 #include "shop.h"
+#include "external/cpptui/tui.hpp"
 #include "product.h"
 #include "tools.h"
 #include <algorithm>
@@ -38,21 +39,24 @@ void shop::add_product(const std::string& name, double price, unsigned int insto
 }
 
 void shop::list_products() {
+    std::string line;
     for (auto arucikk : this->products) {
         std::cout << "\n";
-        std::cout << arucikk.get_name() << " - " << arucikk.get_price()
-                  << "Ft,\tRaktaron: " << arucikk.get_instock() << " db\n";
+        line = concat(arucikk.get_name(), " - ", arucikk.get_price(), "Ft,    Raktaron: ", arucikk.get_instock(), " db");
+        tui::cursor::set_position(tui::cursor::get_position().first, tui::screen::size().second / 2 - line.size() / 2);
+        std::cout << line << "\n";
     }
 }
 
 void shop::list_specific_product(std::string &name) {
+    std::string line;
     // std::cerr << "before this->binary search\n";
     product wanted_product =
         this->products.at(this->binary_search_product_index(name));
     // std::cerr << "found\n";
-    std::cout << wanted_product.get_name() << " - "
-              << wanted_product.get_price()
-              << "Ft,\tRaktaron: " << wanted_product.get_instock() << " db\n";
+    line = concat(wanted_product.get_name(), " - ", wanted_product.get_price(), "Ft,\tRaktaron: ", wanted_product.get_instock(), " db");
+    tui::cursor::set_position(tui::screen::size().first / 2, tui::screen::size().second / 2 - line.size() / 2);
+    std::cout << line;
 }
 
 void shop::load_data() {

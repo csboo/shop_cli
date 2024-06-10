@@ -71,6 +71,7 @@ std::string read_rsp(std::string &rsp){
         };
         std::cout << tui::tui_string(in.value()).blue();
     }
+    tui::cursor::visible(false);
     return rsp;
 }
 input::Arrows input::is_arrow (char &x){

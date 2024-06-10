@@ -82,9 +82,9 @@ void run(shop &shop){
             opt.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at char(48), which is 0
         } 
         if(opt.get_state() == input::States::Default){
-            tui::tui_string msg;
-            std::string str_rsp;
-            std::string str_rsp2;
+            tui::tui_string msg = "";
+            std::string str_rsp = "";
+            std::string str_rsp2 = "";
             int int_rsp = 0;
             int int_rsp2 = 0;
             switch (opt.value()) {
@@ -105,7 +105,7 @@ void run(shop &shop){
                     try {
                         int_rsp = stoi(str_rsp2);
                     } catch (std::invalid_argument) {
-                        print_msg(tui::tui_string("Not a valid number").red(), {2, tui::screen::size().second / 2 - 9}); //magicnumber
+                        print_msg(tui::tui_string("Ervenytelen szam").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
                         tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
                         tui::screen::clear_line_right();
                         str_rsp2 = "";
@@ -121,7 +121,7 @@ void run(shop &shop){
                     try {
                         int_rsp2 = stoi(str_rsp2);
                     } catch (std::invalid_argument) {
-                        print_msg(tui::tui_string("Not a valid number").red(), {2, tui::screen::size().second / 2 - 9}); //magicnumber
+                        print_msg(tui::tui_string("Ervenytelen szam").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
                         tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
                         tui::screen::clear_line_right();
                         str_rsp2 = "";
@@ -129,22 +129,106 @@ void run(shop &shop){
                     };
                 }
 
-                std::cin.get();
                 shop.add_product(str_rsp, int_rsp, int_rsp2);
                 printmenu(menu, pos);
+                print_msg(tui::tui_string(concat("\t", str_rsp, " added successfully")).green());
                 break;
             case '2':
-                print_msg(tui::tui_string("\twas 2").green());
+                tui::screen::clear();
+                tui::cursor::home();
+
+                msg = "Which product would you like to delete?";
+                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
+                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+                read_rsp(str_rsp);
+
+                shop.delete_product(str_rsp);
+                printmenu(menu, pos);
+                print_msg(tui::tui_string(concat("\t", str_rsp, " deleted successfully")).green());
                 break;
             case '3':
+                tui::screen::clear();
+                tui::cursor::home();
+
+                msg = "Which product would you like to sell?";
+                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
+                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+                read_rsp(str_rsp);
+
+                msg = "Please enter the amount to sell:";
+                print_msg(msg.bold(), {tui::cursor::get_position().first + 2, tui::screen::size().second /2 - msg.size()/2}, false);
+                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+                read_rsp(str_rsp2);
+                while (int_rsp == 0) {
+                    try {
+                        int_rsp = stoi(str_rsp2);
+                    } catch (std::invalid_argument) {
+                        print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
+                        tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
+                        tui::screen::clear_line_right();
+                        str_rsp2 = "";
+                        read_rsp(str_rsp2);
+                    };
+                }
+
+                shop.sell(str_rsp, int_rsp);
+                printmenu(menu, pos);
+                print_msg(tui::tui_string(concat("\tSuccessfully sold ", int_rsp, " of " ,str_rsp)).green());
                 break;
             case '4':
+                tui::screen::clear();
+                tui::cursor::home();
+
+                msg = "Which product would you like to restock?";
+                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
+                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+                read_rsp(str_rsp);
+
+                msg = "Please enter the amount to restock:";
+                print_msg(msg.bold(), {tui::cursor::get_position().first + 2, tui::screen::size().second /2 - msg.size()/2}, false);
+                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+                read_rsp(str_rsp2);
+                while (int_rsp == 0) {
+                    try {
+                        int_rsp = stoi(str_rsp2);
+                    } catch (std::invalid_argument) {
+                        print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
+                        tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
+                        tui::screen::clear_line_right();
+                        str_rsp2 = "";
+                        read_rsp(str_rsp2);
+                    };
+                }
+
+                shop.restock(str_rsp, int_rsp);
+                printmenu(menu, pos);
+                print_msg(tui::tui_string(concat("\tSuccessfully restocked ", int_rsp, " of " ,str_rsp)).green());
                 break;
             case '5':
+                tui::screen::clear();
+                tui::cursor::home();
+
+                shop.list_products();
+                std::cin.get();
+                printmenu(menu, pos);
                 break;
             case '6':
+                tui::screen::clear();
+                tui::cursor::home();
+
+                msg = "Which product would you like list?";
+                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
+                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+                read_rsp(str_rsp);
+                
+                tui::screen::clear();
+                shop.list_specific_product(str_rsp);
+                std::cin.get();
+                printmenu(menu, pos);
                 break;
             case '7':
+                shop.load_data();
+                print_msg(tui::tui_string("\tFile loaded successfully").green());
                 break;
             case '8':
                 opt.set(input::States::Default, 'q');
