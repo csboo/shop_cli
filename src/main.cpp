@@ -18,7 +18,6 @@ int main() {
     return 0;
 }
 void app(shop &shop){
-    //TODO grouping code for simplicity, prompt_getstr && prompt_getint
     //TODO more translation
     //TODO pretty print formating, ESC to cancel anything
     //TODO load on start, file name, overwrite support, dont save/load empty, CONFIRMATION Y/n style
@@ -89,42 +88,14 @@ void app(shop &shop){
                 tui::screen::clear();
                 tui::cursor::home();
 
-                msg = "Adja meg a hozzaadni kivant termek nevet:";
-                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp);
+                msg = "What product would you like to add?";
+                make_prompt_string(msg, str_rsp, {6, tui::cursor::get_position().second});
 
-                msg = "Adja meg az arat:";
-                print_msg(msg.bold(), {tui::cursor::get_position().first + 2, tui::screen::size().second /2 - msg.size()/2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp2);
-                while (int_rsp == 0) {
-                    try {
-                        int_rsp = stoi(str_rsp2);
-                    } catch (std::invalid_argument) {
-                        print_msg(tui::tui_string("Ervenytelen szam").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
-                        tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
-                        tui::screen::clear_line_right();
-                        str_rsp2 = "";
-                        read_rsp(str_rsp2);
-                    };
-                }
+                msg = concat("Enter the price for '", str_rsp, "'");
+                make_prompt_int(msg, str_rsp2, int_rsp, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
-                msg = "Adja meg mennyiseget:";
-                print_msg(msg.bold(), {tui::cursor::get_position().first + 2, tui::screen::size().second /2 - msg.size()/2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp2);
-                while (int_rsp2 == 0) {
-                    try {
-                        int_rsp2 = stoi(str_rsp2);
-                    } catch (std::invalid_argument) {
-                        print_msg(tui::tui_string("Ervenytelen szam").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
-                        tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
-                        tui::screen::clear_line_right();
-                        str_rsp2 = "";
-                        read_rsp(str_rsp2);
-                    };
-                }
+                msg = concat("Enter the amount to add of '", str_rsp, "'");
+                make_prompt_int(msg, str_rsp2, int_rsp2, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
                 shop.add_product(str_rsp, int_rsp, int_rsp2);
                 printmenu(menu, pos);
@@ -135,9 +106,7 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to delete?";
-                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp);
+                make_prompt_string(msg, str_rsp, {6, tui::cursor::get_position().second});
 
                 shop.delete_product(str_rsp);
                 printmenu(menu, pos);
@@ -148,25 +117,10 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to sell?";
-                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp);
+                make_prompt_string(msg, str_rsp, {6, tui::cursor::get_position().second});
 
                 msg = "Please enter the amount to sell:";
-                print_msg(msg.bold(), {tui::cursor::get_position().first + 2, tui::screen::size().second /2 - msg.size()/2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp2);
-                while (int_rsp == 0) {
-                    try {
-                        int_rsp = stoi(str_rsp2);
-                    } catch (std::invalid_argument) {
-                        print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
-                        tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
-                        tui::screen::clear_line_right();
-                        str_rsp2 = "";
-                        read_rsp(str_rsp2);
-                    };
-                }
+                make_prompt_int(msg, str_rsp2, int_rsp, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
                 shop.sell(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -177,25 +131,10 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to restock?";
-                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp);
+                make_prompt_string(msg, str_rsp, {tui::cursor::get_position().first + 6, tui::cursor::get_position().second});
 
                 msg = "Please enter the amount to restock:";
-                print_msg(msg.bold(), {tui::cursor::get_position().first + 2, tui::screen::size().second /2 - msg.size()/2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp2);
-                while (int_rsp == 0) {
-                    try {
-                        int_rsp = stoi(str_rsp2);
-                    } catch (std::invalid_argument) {
-                        print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
-                        tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_rsp2.size());
-                        tui::screen::clear_line_right();
-                        str_rsp2 = "";
-                        read_rsp(str_rsp2);
-                    };
-                }
+                make_prompt_int(msg, str_rsp2, int_rsp, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
                 shop.restock(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -214,9 +153,7 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like list?";
-                print_msg(msg.bold(), {6, tui::screen::size().second / 2 - msg.size() / 2}, false);
-                tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-                read_rsp(str_rsp);
+                make_prompt_string(msg, str_rsp, {tui::cursor::get_position().first + 6, tui::cursor::get_position().second});
                 
                 tui::screen::clear();
                 shop.list_specific_product(str_rsp);
