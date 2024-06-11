@@ -1,4 +1,5 @@
 #pragma once
+#include "external/cpptui/tui.hpp"
 #include <string>
 #include <vector>
 
@@ -41,3 +42,5 @@ void clear_msg();
 void printmenu(std::vector<std::string> &menu, int invert = 0);
 std::vector<std::string> init_menu(std::vector<std::string> &v);
 std::string read_rsp(std::string &rsp);
+std::string make_prompt_string(tui::tui_string &msg, std::string &holder, std::pair<unsigned, unsigned> start_coord = {tui::cursor::get_position().first, tui::cursor::get_position().second});
+int make_prompt_int(tui::tui_string &msg, std::string &str_holder, int &int_holder, std::pair<unsigned, unsigned> start_coord = {tui::cursor::get_position().first, tui::cursor::get_position().second});

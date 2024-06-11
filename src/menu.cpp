@@ -141,3 +141,28 @@ void input::get(){
         }
     }
 }
+std::string make_prompt_string(tui::tui_string &msg, std::string &holder, std::pair<unsigned, unsigned> start_coord) {
+    tui::cursor::set_position(start_coord);
+    print_msg(msg, {tui::cursor::get_position().first, tui::screen::size().second / 2 - msg.size() / 2}, false);
+    tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+    read_rsp(holder);
+    return holder;
+}
+int make_prompt_int(tui::tui_string &msg, std::string &str_holder, int &int_holder, std::pair<unsigned, unsigned> start_coord) {
+    tui::cursor::set_position(start_coord);
+    print_msg(msg, {tui::cursor::get_position().first, tui::screen::size().second / 2 - msg.size() / 2}, false);
+    tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+    read_rsp(str_holder);
+    while (int_holder == 0) {
+        try {
+            int_holder = stoi(str_holder);
+        } catch (std::invalid_argument) {
+            print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
+            tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_holder.size());
+            tui::screen::clear_line_right();
+            str_holder = "";
+            read_rsp(str_holder);
+        };
+    }
+    return int_holder;
+}
