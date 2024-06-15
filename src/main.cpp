@@ -3,7 +3,6 @@
 #include "shop.h"
 #include "tools.h"
 #include <iostream>
-#include <stdexcept>
 #include <string>
 #include <unistd.h>
 #include <utility>
@@ -13,22 +12,40 @@ void app(shop &shop);
 
 // main function
 int main() {
+    reset_log();
+    tui::init_term(false, true);
+
     shop shop;
-    app(shop);
+    try {
+        app(shop);
+    } catch (...) {
+        tui::cursor::visible(false);
+        tui::screen::clear();
+        print_msg("App crashed due to an unknown error", {tui::screen::size().first / 2, tui::screen::size().second / 2 - 35 / 2}); //yam    
+        print_msg("Press any key to quit.", {tui::screen::size().first / 2 + 1, tui::screen::size().second / 2 - 22 / 2}); //yam
+        std::cin.clear();
+        std::cin.get();
+    }
+
+    tui::reset_term();
     return 0;
 }
 void app(shop &shop){
+    //TODO trim whitespaces from reading strings mayybe]
+    //TODO handel cases where the shit is empty or doesnt exist
+    //TODO Handel whitespaces
     //TODO more translation
+    //TODO fzf
+    //TODO MAYBE print_another_msg() prints msg and \r\n\t
+    //TODO TUI_HPP tui_string().rawsize()
     //TODO pretty print formating, ESC to cancel anything
     //TODO load on start, file name, overwrite support, dont save/load empty, CONFIRMATION Y/n style
-    reset_log();
-    tui::init_term(false, true);
+    //TODO error handling
     std::vector<std::string> menu;
     init_menu(menu);
     printmenu(menu);
     input opt;
     int pos=0;
-    int iter = 0;
     while (opt.value() != 'q'){
         opt.get();
         clear_msg();
@@ -79,6 +96,7 @@ void app(shop &shop){
         } 
         if(opt.get_state() == input::States::Default){
             tui::tui_string msg = "";
+            tui::tui_string msg2 = "";
             std::string str_rsp = "";
             std::string str_rsp2 = "";
             int int_rsp = 0;
@@ -89,13 +107,13 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "What product would you like to add?";
-                make_prompt_string(msg, str_rsp, {6, tui::cursor::get_position().second});
+                case_handling::make_prompt_string(str_rsp, msg,  {6, tui::screen::size().second / 2 - msg.size() / 2});
 
                 msg = concat("Enter the price for '", str_rsp, "'");
-                make_prompt_int(msg, str_rsp2, int_rsp, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
+                case_handling::make_prompt_int(str_rsp2, int_rsp, msg, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
                 msg = concat("Enter the amount to add of '", str_rsp, "'");
-                make_prompt_int(msg, str_rsp2, int_rsp2, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
+                case_handling::make_prompt_int(str_rsp2, int_rsp2, msg, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
                 shop.add_product(str_rsp, int_rsp, int_rsp2);
                 printmenu(menu, pos);
@@ -106,7 +124,7 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to delete?";
-                make_prompt_string(msg, str_rsp, {6, tui::cursor::get_position().second});
+                case_handling::get_valid_name(shop, str_rsp, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
 
                 shop.delete_product(str_rsp);
                 printmenu(menu, pos);
@@ -117,10 +135,10 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to sell?";
-                make_prompt_string(msg, str_rsp, {6, tui::cursor::get_position().second});
+                str_rsp = case_handling::get_valid_name(shop, str_rsp, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
 
                 msg = "Please enter the amount to sell:";
-                make_prompt_int(msg, str_rsp2, int_rsp, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
+                case_handling::get_valid_amount(shop, str_rsp, str_rsp2, int_rsp, msg, {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
 
                 shop.sell(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -131,10 +149,10 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to restock?";
-                make_prompt_string(msg, str_rsp, {tui::cursor::get_position().first + 6, tui::cursor::get_position().second});
+                str_rsp = case_handling::get_valid_name(shop, str_rsp, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
 
                 msg = "Please enter the amount to restock:";
-                make_prompt_int(msg, str_rsp2, int_rsp, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
+                case_handling::get_valid_amount(shop, str_rsp, str_rsp2, int_rsp, msg, {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
 
                 shop.restock(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -153,7 +171,7 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like list?";
-                make_prompt_string(msg, str_rsp, {tui::cursor::get_position().first + 6, tui::cursor::get_position().second});
+                case_handling::get_valid_name(shop, str_rsp, msg, {tui::cursor::get_position().first + 6, tui::screen::size().second / 2 - msg.size() / 2});
                 
                 tui::screen::clear();
                 shop.list_specific_product(str_rsp);
@@ -181,5 +199,4 @@ void app(shop &shop){
             continue;
         }   
     }
-    tui::reset_term();
 }
