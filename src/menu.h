@@ -1,5 +1,6 @@
 #pragma once
 #include "external/cpptui/tui.hpp"
+#include "shop.h"
 #include <string>
 #include <vector>
 
@@ -18,10 +19,11 @@ public:
         Arrow = 1,
         Enter = 2,
         Bad = 3,
+        // Esc = 4
     };
     input() = default;
     void get();
-    inline auto set(States state = States::Default, char val = '\0', Arrows arrow_state = Arrows::None){this->state = state;this->opt = val;this->arrow_state = arrow_state;}
+    inline void set(States state = States::Default, char val = '\0', Arrows arrow_state = Arrows::None){this->state = state;this->opt = val;this->arrow_state = arrow_state;}
     //getters/setter
     inline auto get_state(){return this->state;}
     inline void switch_state(States state){this->state = state;}
@@ -37,10 +39,15 @@ private:
     Arrows arrow_state;
 };
 
+namespace case_handling{
+    std::string make_prompt_string(std::string &holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
+    int make_prompt_int(std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords = {tui::cursor::get_position().first, tui::cursor::get_position().second});
+    std::string get_valid_name(shop &shop, std::string &name, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
+    int get_valid_amount(shop &shop, std::string &product_name, std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
+};
+
 void print_msg(std::string text, std::pair<unsigned, unsigned> coords = {2, 1}, bool save_cursor = true);
 void clear_msg();
 void printmenu(std::vector<std::string> &menu, int invert = 0);
 std::vector<std::string> init_menu(std::vector<std::string> &v);
 std::string read_rsp(std::string &rsp);
-std::string make_prompt_string(tui::tui_string &msg, std::string &holder, std::pair<unsigned, unsigned> start_coord = {tui::cursor::get_position().first, tui::cursor::get_position().second});
-int make_prompt_int(tui::tui_string &msg, std::string &str_holder, int &int_holder, std::pair<unsigned, unsigned> start_coord = {tui::cursor::get_position().first, tui::cursor::get_position().second});

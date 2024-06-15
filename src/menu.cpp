@@ -1,5 +1,7 @@
 #include "menu.h"
 #include "external/cpptui/tui.hpp"
+#include "shop.h"
+#include "tools.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,11 +24,13 @@ void printmenu(std::vector<std::string> &menu, int invert){
 void print_msg(std::string text, std::pair<unsigned, unsigned> coords, bool save_cursor){
     if (!save_cursor) {
         tui::cursor::set_position(coords.first, coords.second);
+        tui::screen::clear_line();
         std::cout << text; 
         return;
     }
     std::pair<unsigned, unsigned> pos = tui::cursor::get_position();
     tui::cursor::set_position(coords.first, coords.second);
+    tui::screen::clear_line();
     std::cout << text; 
     tui::cursor::set_position(pos);
 }
@@ -51,6 +55,7 @@ std::vector<std::string> init_menu(std::vector<std::string> &v){
     return v;
 }
 std::string read_rsp(std::string &rsp){
+    rsp = "";
     input in;
     tui::cursor::visible(true);
     while (in.get_state() != input::States::Enter) {
@@ -141,17 +146,17 @@ void input::get(){
         }
     }
 }
-std::string make_prompt_string(tui::tui_string &msg, std::string &holder, std::pair<unsigned, unsigned> start_coord) {
-    tui::cursor::set_position(start_coord);
-    print_msg(msg, {tui::cursor::get_position().first, tui::screen::size().second / 2 - msg.size() / 2}, false);
+std::string case_handling::make_prompt_string(std::string &holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+    print_msg(msg, start_coords, false);
     tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
     read_rsp(holder);
     return holder;
 }
-int make_prompt_int(tui::tui_string &msg, std::string &str_holder, int &int_holder, std::pair<unsigned, unsigned> start_coord) {
-    tui::cursor::set_position(start_coord);
+int case_handling::make_prompt_int(std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+    tui::cursor::set_position(start_coords);
     print_msg(msg, {tui::cursor::get_position().first, tui::screen::size().second / 2 - msg.size() / 2}, false);
     tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
+    str_holder = ""; int_holder = 0;
     read_rsp(str_holder);
     while (int_holder == 0) {
         try {
@@ -160,9 +165,33 @@ int make_prompt_int(tui::tui_string &msg, std::string &str_holder, int &int_hold
             print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
             tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_holder.size());
             tui::screen::clear_line_right();
-            str_holder = "";
             read_rsp(str_holder);
         };
     }
     return int_holder;
 }
+std::string case_handling::get_valid_name(shop &shop, std::string &name, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
+    name = case_handling::make_prompt_string(name, msg, start_coords);
+    while(shop.binary_search_product_index(name) == -1){
+        tui::screen::clear_line();
+        print_msg(tui::tui_string(concat(name, " does not exist")).red(), {2, tui::screen::size().second / 2 - (name.size() / 2 + 15 / 2)}); //yam yam (Yet Another Magicnumber)
+        make_prompt_string(name, msg, start_coords);
+    }
+    return name;
+}
+
+int case_handling::get_valid_amount(shop &shop, std::string &product_name, std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
+    int_holder = case_handling::make_prompt_int(str_holder, int_holder, msg, start_coords);
+    tui::tui_string msg2;
+    while(shop.get_products().at(shop.binary_search_product_index(product_name)).get_instock() < int_holder){
+        int_holder < 0 ? 
+                    msg2 = "Invalid number" :
+                    msg2 = concat(int_holder, " is too big, there is only ", shop.get_products().at(shop.binary_search_product_index(product_name)).get_instock(), " of ", product_name, "s in stock");
+        print_msg(msg2.red(), {2, tui::screen::size().second / 2 - msg2.size() /  2}); //yam yam (Yet Another Magicnumber)
+        tui::screen::clear_line();
+        int_holder = case_handling::make_prompt_int(str_holder, int_holder, msg, start_coords);
+    }
+    return int_holder;
+}
+
+
