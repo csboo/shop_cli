@@ -31,7 +31,8 @@ int main() {
     return 0;
 }
 void app(shop &shop){
-    //TODO trim whitespaces from reading strings mayybe]
+    //TODO make case handling shit temp, instead of global(ish)
+    //TODO trim whitespaces from reading strings mayybe
     //TODO handel cases where the shit is empty or doesnt exist
     //TODO Handel whitespaces
     //TODO more translation
@@ -41,30 +42,23 @@ void app(shop &shop){
     //TODO pretty print formating, ESC to cancel anything
     //TODO load on start, file name, overwrite support, dont save/load empty, CONFIRMATION Y/n style
     //TODO error handling
+    //TODO arrow handling could be a while()
     std::vector<std::string> menu;
     init_menu(menu);
     printmenu(menu);
     input opt;
     int pos=0;
     while (opt.value() != 'q'){
+        print_log(concat("Last known state was(Def, Arr, Ent, Bad, Esc): ", opt.get_state()));
         opt.get();
         clear_msg();
         
-        if (opt.get_state() == input::States::Bad) {
-            opt.set();
-        }
-        if (opt.value() == 'k') {
-            opt.set(input::States::Arrow, '\0', input::Arrows::Up);
-        }
-        if (opt.value() == 'j') {
-            opt.set(input::States::Arrow, '\0', input::Arrows::Down);
-        }
-        if (opt.value() == 'h') {
-            opt.set(input::States::Arrow, '\0', input::Arrows::Left);
-        }
-        if (opt.value() == 'l') {
-            opt.set(input::States::Arrow, '\0', input::Arrows::Right);
-        }
+        custom_keys(opt, {
+                    {'k', {input::States::Arrow, '\0', input::Arrows::Up} }, 
+                    {'j', {input::States::Arrow, '\0', input::Arrows::Down} },
+                    {'h', {input::States::Arrow, '\0', input::Arrows::Left} },
+                    {'l', {input::States::Arrow, '\0', input::Arrows::Right} }
+        });
         if(opt.get_state() == input::States::Arrow) {
             switch (opt.get_arrow_state()) {
             case input::Arrows::Up:
@@ -108,6 +102,11 @@ void app(shop &shop){
 
                 msg = "What product would you like to add?";
                 case_handling::make_prompt_string(str_rsp, msg,  {6, tui::screen::size().second / 2 - msg.size() / 2});
+                std::cin.ignore();
+                if (str_rsp == "\0") {
+                    printmenu(menu, pos);
+                    break;
+                }
 
                 msg = concat("Enter the price for '", str_rsp, "'");
                 case_handling::make_prompt_int(str_rsp2, int_rsp, msg, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
@@ -195,8 +194,12 @@ void app(shop &shop){
             };
         }
         if (opt.get_state() == input::States::Bad) {
-            print_msg(tui::tui_string("\tHibas bemenet!").red());
+            print_msg(tui::tui_string("\tWrong input").red());
             continue;
         }   
+        if (opt.get_state() == input::States::Esc) {
+            print_msg(tui::tui_string("\tOperation canceled").blue());
+            continue;
+        }
     }
 }

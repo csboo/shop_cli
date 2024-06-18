@@ -4,6 +4,7 @@
 #include "tools.h"
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 void printmenu(std::vector<std::string> &menu, int invert){
@@ -60,27 +61,27 @@ std::string read_rsp(std::string &rsp){
     tui::cursor::visible(true);
     while (in.get_state() != input::States::Enter) {
         in.get();
-        switch (in.get_state()) {
-        case input::States::Arrow:
-        case input::States::Bad:
-        case input::States::Enter:
-            continue;
-        case input::States::Default:
-            if (in.value() != tui::chars::backspace){
-                rsp.push_back(in.value());
-            } else if (rsp.size() > 0){
+        print_log(concat("input was ", int(in.value())));
+        if (in.get_state() == input::States::Esc) {
+            print_log(concat("Esc detected"));
+            return "\0";
+        }
+        if (in.get_state() == input::States::Default) {
+            if (in.value() == tui::chars::backspace && rsp.size() > 0) {
                 tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second-1);
                 tui::screen::clear_line_right();
                 rsp.pop_back();
+            } else {
+                rsp.push_back(in.value());
             }
-            break;
-        };
-        std::cout << tui::tui_string(in.value()).blue();
+            std::cout << tui::tui_string(in.value()).blue();
+        }
     }
     tui::cursor::visible(false);
+    print_log(concat("read valid input: ", rsp));
     return rsp;
 }
-input::Arrows input::is_arrow (char &x){
+input::Arrows input::is_arrow (char &x) {
     if(x == 27 && std::cin.peek() == 91) {
         std::cin.ignore();
         switch (std::cin.peek()) {
@@ -112,36 +113,34 @@ void input::get(){
     std::cin.get(this->opt);
     switch (this->is_arrow(this->opt)){
     case input::Arrows::Up:
-        this->state = this->States::Arrow;
-        this->arrow_state = input::Arrows::Up;
+        this->set(input::States::Arrow, '\0', input::Arrows::Up);
         return;
     case input::Arrows::Down:
-        this->state = this->States::Arrow;
-        this->arrow_state = input::Arrows::Down;
+        this->set(input::States::Arrow, '\0', input::Arrows::Down);
         return;
     case input::Arrows::Left:
-        this->state = this->States::Arrow;
-        this->arrow_state = input::Arrows::Left;
+        this->set(input::States::Arrow, '\0', input::Arrows::Left);
         return;
     case input::Arrows::Right:
-        this->state = this->States::Arrow;
-        this->arrow_state = input::Arrows::Right;
+        this->set(input::States::Arrow, '\0', input::Arrows::Right);
         return;
     case input::Arrows::Ctrl:
-        this->state = this->States::Arrow;
-        this->arrow_state = input::Arrows::Ctrl;
+        this->set(input::States::Arrow, '\0', input::Arrows::Ctrl);
         return;
     case input::Arrows::None:
-        if (this->opt == tui::chars::enter){
-            this->state = this->States::Enter;
+        if (this->opt == 27) {
+            this->set(input::States::Esc, '\0', input::Arrows::None);
+            return;
+        }
+        if (this->opt == tui::chars::Enter){
+            this->set(input::States::Enter);
             return;
         } else if (this->opt < 0){
-            this->state = this->States::Bad;
-            this->opt = '\0';
-            std::cin.clear();
+            this->set(input::States::Bad);
+            // std::cin.clear();
             return;
         } else {
-            this->state = this->States::Default;
+            this->state = input::States::Default;
             return;
         }
     }
@@ -149,7 +148,8 @@ void input::get(){
 std::string case_handling::make_prompt_string(std::string &holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
     print_msg(msg, start_coords, false);
     tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-    read_rsp(holder);
+    holder = read_rsp(holder);
+    print_log(concat("returned str was: '", holder, "'"));
     return holder;
 }
 int case_handling::make_prompt_int(std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
@@ -194,4 +194,10 @@ int case_handling::get_valid_amount(shop &shop, std::string &product_name, std::
     return int_holder;
 }
 
+void custom_keys(input &in, std::unordered_map<char, mapper> keys){
+    auto key = keys.find(in.value());
+    if (key != keys.end()) {
+        in.set(key->second.state, key->second.value, key->second.arrow_state);
+    }
+}
 

@@ -49,7 +49,11 @@ void shop::sort_products_by_name() {
         std::swap(this->products.at(i), this->products.at(min));
     }
 }
+bool global_logging = true;
 void print_log(std::string text){
+    if (!global_logging) {
+        return;
+    }
     std::ofstream fout("log.txt", std::ios::app);
     fout << text << "\n";
     fout.close();
