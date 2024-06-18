@@ -42,10 +42,10 @@ private:
 };
 
 namespace case_handling{
-    std::string make_prompt_string(std::string &holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
-    int make_prompt_int(std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords = {tui::cursor::get_position().first, tui::cursor::get_position().second});
-    std::string get_valid_name(shop &shop, std::string &name, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
-    int get_valid_amount(shop &shop, std::string &product_name, std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
+    std::string make_prompt_string(tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
+    int make_prompt_int(tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords = {tui::cursor::get_position().first, tui::cursor::get_position().second});
+    std::string get_valid_name(shop &shop, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
+    int get_valid_amount(shop &shop, std::string &product_name, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords);
 };
 struct mapper{
     input::States state = input::States::Bad;  
@@ -56,5 +56,5 @@ void print_msg(std::string text, std::pair<unsigned, unsigned> coords = {2, 1}, 
 void clear_msg();
 void printmenu(std::vector<std::string> &menu, int invert = 0);
 std::vector<std::string> init_menu(std::vector<std::string> &v);
-std::string read_rsp(std::string &rsp);
+std::string read_valid_char();
 void custom_keys(input &in, std::unordered_map<char, mapper> keys);

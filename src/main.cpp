@@ -31,88 +31,76 @@ int main() {
     return 0;
 }
 void app(shop &shop){
-    //TODO make case handling shit temp, instead of global(ish)
-    //TODO trim whitespaces from reading strings mayybe
-    //TODO handel cases where the shit is empty or doesnt exist
-    //TODO Handel whitespaces
-    //TODO more translation
-    //TODO fzf
-    //TODO MAYBE print_another_msg() prints msg and \r\n\t
-    //TODO TUI_HPP tui_string().rawsize()
-    //TODO pretty print formating, ESC to cancel anything
-    //TODO load on start, file name, overwrite support, dont save/load empty, CONFIRMATION Y/n style
-    //TODO error handling
-    //TODO arrow handling could be a while()
     std::vector<std::string> menu;
     init_menu(menu);
     printmenu(menu);
-    input opt;
+    input input_handler;
     int pos=0;
-    while (opt.value() != 'q'){
-        print_log(concat("Last known state was(Def, Arr, Ent, Bad, Esc): ", opt.get_state()));
-        opt.get();
+    while (input_handler.value() != 'q'){
+        input_handler.get();
+        print_log(concat("Starting with state(Def, Arr, Ent, Bad, Esc): ", input_handler.get_state()));
         clear_msg();
         
-        custom_keys(opt, {
+        custom_keys(input_handler, {
                     {'k', {input::States::Arrow, '\0', input::Arrows::Up} }, 
                     {'j', {input::States::Arrow, '\0', input::Arrows::Down} },
                     {'h', {input::States::Arrow, '\0', input::Arrows::Left} },
                     {'l', {input::States::Arrow, '\0', input::Arrows::Right} }
         });
-        if(opt.get_state() == input::States::Arrow) {
-            switch (opt.get_arrow_state()) {
+        while(input_handler.get_state() == input::States::Arrow) {
+            switch (input_handler.get_arrow_state()) {
             case input::Arrows::Up:
                 if (--pos < 0) {
                     pos = menu.size()-1;
                 }
                 printmenu(menu, pos);
-                opt.set();
+                input_handler.get();
                 continue;            
             case input::Arrows::Down:
                 if (++pos == menu.size()) {
                     pos = 0;
                 }
                 printmenu(menu, pos);
-                opt.set();
+                input_handler.get();
                 continue;
             case input::Arrows::Right:
-                opt.switch_state(input::States::Enter);
+                input_handler.switch_state(input::States::Enter);
                 break;
             case input::Arrows::Left:
             case input::Arrows::Ctrl:
             default:
-                opt.set(input::States::Bad);
+                input_handler.set(input::States::Bad);
                 break;
             };
         }
-        if (opt.get_state() == input::States::Enter) {
-            opt.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at char(48), which is 0
+        if (input_handler.get_state() == input::States::Enter) {
+            input_handler.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at char(48), which is 0
         } 
-        if(opt.get_state() == input::States::Default){
+        if(input_handler.get_state() == input::States::Default){
             tui::tui_string msg = "";
-            tui::tui_string msg2 = "";
             std::string str_rsp = "";
             std::string str_rsp2 = "";
             int int_rsp = 0;
             int int_rsp2 = 0;
-            switch (opt.value()) {
+            switch (input_handler.value()) {
             case '1':
                 tui::screen::clear();
                 tui::cursor::home();
 
                 msg = "What product would you like to add?";
-                case_handling::make_prompt_string(str_rsp, msg,  {6, tui::screen::size().second / 2 - msg.size() / 2});
-                std::cin.ignore();
+                str_rsp = case_handling::make_prompt_string(msg,  {6, tui::screen::size().second / 2 - msg.size() / 2});
                 if (str_rsp == "\0") {
+                    input_handler.set(input::States::Esc);
+                    std::cin.ignore();
                     printmenu(menu, pos);
                     break;
                 }
 
                 msg = concat("Enter the price for '", str_rsp, "'");
-                case_handling::make_prompt_int(str_rsp2, int_rsp, msg, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
+                int_rsp = case_handling::make_prompt_int(msg, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
                 msg = concat("Enter the amount to add of '", str_rsp, "'");
-                case_handling::make_prompt_int(str_rsp2, int_rsp2, msg, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
+                int_rsp2 = case_handling::make_prompt_int(msg, {tui::cursor::get_position().first + 2, tui::cursor::get_position().second});
 
                 shop.add_product(str_rsp, int_rsp, int_rsp2);
                 printmenu(menu, pos);
@@ -123,7 +111,7 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to delete?";
-                case_handling::get_valid_name(shop, str_rsp, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
+                str_rsp = case_handling::get_valid_name(shop, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
 
                 shop.delete_product(str_rsp);
                 printmenu(menu, pos);
@@ -134,10 +122,10 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to sell?";
-                str_rsp = case_handling::get_valid_name(shop, str_rsp, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
+                str_rsp = case_handling::get_valid_name(shop, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
 
                 msg = "Please enter the amount to sell:";
-                case_handling::get_valid_amount(shop, str_rsp, str_rsp2, int_rsp, msg, {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
+                int_rsp = case_handling::get_valid_amount(shop, str_rsp, msg, {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
 
                 shop.sell(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -148,10 +136,10 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like to restock?";
-                str_rsp = case_handling::get_valid_name(shop, str_rsp, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
+                str_rsp = case_handling::get_valid_name(shop, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
 
                 msg = "Please enter the amount to restock:";
-                case_handling::get_valid_amount(shop, str_rsp, str_rsp2, int_rsp, msg, {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
+                int_rsp = case_handling::get_valid_amount(shop, str_rsp, msg, {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
 
                 shop.restock(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -170,7 +158,7 @@ void app(shop &shop){
                 tui::cursor::home();
 
                 msg = "Which product would you like list?";
-                case_handling::get_valid_name(shop, str_rsp, msg, {tui::cursor::get_position().first + 6, tui::screen::size().second / 2 - msg.size() / 2});
+                str_rsp = case_handling::get_valid_name(shop, msg, {tui::cursor::get_position().first + 6, tui::screen::size().second / 2 - msg.size() / 2});
                 
                 tui::screen::clear();
                 shop.list_specific_product(str_rsp);
@@ -186,18 +174,19 @@ void app(shop &shop){
                 print_msg(tui::tui_string("\tFile loaded successfully").green());
                 break;
             case '9':
-                opt.set(input::States::Default, 'q');
+                input_handler.set(input::States::Default, 'q');
                 continue;
             default:
-                opt.switch_state(input::States::Bad);
+                input_handler.switch_state(input::States::Bad);
+                print_log("ByeBye");
                 break;
             };
         }
-        if (opt.get_state() == input::States::Bad) {
+        if (input_handler.get_state() == input::States::Bad) {
             print_msg(tui::tui_string("\tWrong input").red());
             continue;
         }   
-        if (opt.get_state() == input::States::Esc) {
+        if (input_handler.get_state() == input::States::Esc) {
             print_msg(tui::tui_string("\tOperation canceled").blue());
             continue;
         }

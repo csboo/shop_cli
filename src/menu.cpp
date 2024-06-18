@@ -55,8 +55,8 @@ std::vector<std::string> init_menu(std::vector<std::string> &v){
 
     return v;
 }
-std::string read_rsp(std::string &rsp){
-    rsp = "";
+std::string read_valid_char() {
+    std::string temp = "";
     input in;
     tui::cursor::visible(true);
     while (in.get_state() != input::States::Enter) {
@@ -67,19 +67,19 @@ std::string read_rsp(std::string &rsp){
             return "\0";
         }
         if (in.get_state() == input::States::Default) {
-            if (in.value() == tui::chars::backspace && rsp.size() > 0) {
+            if (in.value() == tui::chars::backspace && temp.size() > 0) {
                 tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second-1);
                 tui::screen::clear_line_right();
-                rsp.pop_back();
+                temp.pop_back();
             } else {
-                rsp.push_back(in.value());
+                temp.push_back(in.value());
             }
             std::cout << tui::tui_string(in.value()).blue();
         }
     }
     tui::cursor::visible(false);
-    print_log(concat("read valid input: ", rsp));
-    return rsp;
+    print_log(concat("read valid input: '", temp, "'"));
+    return temp;
 }
 input::Arrows input::is_arrow (char &x) {
     if(x == 27 && std::cin.peek() == 91) {
@@ -145,53 +145,55 @@ void input::get(){
         }
     }
 }
-std::string case_handling::make_prompt_string(std::string &holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+std::string case_handling::make_prompt_string(tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+    std::string temp;
     print_msg(msg, start_coords, false);
     tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-    holder = read_rsp(holder);
-    print_log(concat("returned str was: '", holder, "'"));
-    return holder;
+    temp = read_valid_char();
+    print_log(concat("returned str was: '", temp, "'"));
+    return temp;
 }
-int case_handling::make_prompt_int(std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+int case_handling::make_prompt_int(tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+    std::string temp_str;
+    int temp_int = 0;
     tui::cursor::set_position(start_coords);
     print_msg(msg, {tui::cursor::get_position().first, tui::screen::size().second / 2 - msg.size() / 2}, false);
     tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
-    str_holder = ""; int_holder = 0;
-    read_rsp(str_holder);
-    while (int_holder == 0) {
+    temp_str = read_valid_char();
+    while (temp_int == 0) {
         try {
-            int_holder = stoi(str_holder);
+            temp_int = stoi(temp_str);
         } catch (std::invalid_argument) {
             print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
-            tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - str_holder.size());
+            tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - temp_str.size());
             tui::screen::clear_line_right();
-            read_rsp(str_holder);
+            temp_str = read_valid_char();
         };
     }
-    return int_holder;
+    return temp_int;
 }
-std::string case_handling::get_valid_name(shop &shop, std::string &name, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
-    name = case_handling::make_prompt_string(name, msg, start_coords);
-    while(shop.binary_search_product_index(name) == -1){
+std::string case_handling::get_valid_name(shop &shop, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
+    std::string temp_str = case_handling::make_prompt_string(msg, start_coords);
+    while(shop.binary_search_product_index(temp_str) == -1){
         tui::screen::clear_line();
-        print_msg(tui::tui_string(concat(name, " does not exist")).red(), {2, tui::screen::size().second / 2 - (name.size() / 2 + 15 / 2)}); //yam yam (Yet Another Magicnumber)
-        make_prompt_string(name, msg, start_coords);
+        print_msg(tui::tui_string(concat(temp_str, " does not exist")).red(), {2, tui::screen::size().second / 2 - (temp_str.size() / 2 + 15 / 2)}); //yam yam (Yet Another Magicnumber)
+        temp_str = make_prompt_string(msg, start_coords);
     }
-    return name;
+    return temp_str;
 }
 
-int case_handling::get_valid_amount(shop &shop, std::string &product_name, std::string &str_holder, int &int_holder, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
-    int_holder = case_handling::make_prompt_int(str_holder, int_holder, msg, start_coords);
-    tui::tui_string msg2;
-    while(shop.get_products().at(shop.binary_search_product_index(product_name)).get_instock() < int_holder){
-        int_holder < 0 ? 
-                    msg2 = "Invalid number" :
-                    msg2 = concat(int_holder, " is too big, there is only ", shop.get_products().at(shop.binary_search_product_index(product_name)).get_instock(), " of ", product_name, "s in stock");
-        print_msg(msg2.red(), {2, tui::screen::size().second / 2 - msg2.size() /  2}); //yam yam (Yet Another Magicnumber)
+int case_handling::get_valid_amount(shop &shop, std::string &product_name, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
+    int temp_int = case_handling::make_prompt_int(msg, start_coords);
+    tui::tui_string error_msg;
+    while(shop.get_products().at(shop.binary_search_product_index(product_name)).get_instock() < temp_int){
+        temp_int < 0 ? 
+                    error_msg = "Invalid number" :
+                    error_msg = concat(temp_int, " is too big, there is only ", shop.get_products().at(shop.binary_search_product_index(product_name)).get_instock(), " of ", product_name, "s in stock");
+        print_msg(error_msg.red(), {2, tui::screen::size().second / 2 - error_msg.size() /  2});
         tui::screen::clear_line();
-        int_holder = case_handling::make_prompt_int(str_holder, int_holder, msg, start_coords);
+        temp_int = case_handling::make_prompt_int(msg, start_coords);
     }
-    return int_holder;
+    return temp_int;
 }
 
 void custom_keys(input &in, std::unordered_map<char, mapper> keys){
