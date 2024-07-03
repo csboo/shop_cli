@@ -1,5 +1,5 @@
 #include "menu.h"
-#include "external/cpptui/tui.hpp"
+#include "../external/cpptui/tui.hpp"
 #include "shop.h"
 #include "tools.h"
 #include <iostream>
@@ -67,7 +67,7 @@ std::string read_valid_char() {
             return "\0";
         }
         if (in.get_state() == input::States::Default) {
-            if (in.value() == tui::chars::backspace && temp.size() > 0) {
+            if (in.value() == tui::chars::BACKSPACE && temp.size() > 0) {
                 tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second-1);
                 tui::screen::clear_line_right();
                 temp.pop_back();
@@ -132,7 +132,7 @@ void input::get(){
             this->set(input::States::Esc, '\0', input::Arrows::None);
             return;
         }
-        if (this->opt == tui::chars::Enter){
+        if (this->opt == tui::chars::ENTER){
             this->set(input::States::Enter);
             return;
         } else if (this->opt < 0){

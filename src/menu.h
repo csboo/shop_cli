@@ -1,5 +1,5 @@
 #pragma once
-#include "external/cpptui/tui.hpp"
+#include "../external/cpptui/tui.hpp"
 #include "shop.h"
 #include <set>
 #include <string>

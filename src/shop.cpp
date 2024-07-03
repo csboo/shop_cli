@@ -1,5 +1,5 @@
 #include "shop.h"
-#include "external/cpptui/tui.hpp"
+#include "../external/cpptui/tui.hpp"
 #include "product.h"
 #include "tools.h"
 #include <algorithm>
@@ -63,7 +63,7 @@ void shop::load_data() {
     // std::cerr << "initing...\n";
     std::ifstream fin("storage.txt");
     if (!fin.is_open()) {
-        throw 404;
+        throw 1;
     }
 
     std::string name;
@@ -92,7 +92,7 @@ void shop::save_data() {
 
     std::ofstream fout("storage.txt");
     if (!fout.is_open()) {
-        throw 404;
+        throw 1;
     }
 
     for (auto i : this->products) {

@@ -1,5 +1,5 @@
 #pragma once 
-#include "external/cpptui/tui.hpp"
+#include "../external/cpptui/tui.hpp"
 #include <cmath>
 #include <iostream>
 

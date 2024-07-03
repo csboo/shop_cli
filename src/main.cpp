@@ -1,4 +1,4 @@
-#include "external/cpptui/tui.hpp"
+#include "../external/cpptui/tui.hpp"
 #include "menu.h"
 #include "shop.h"
 #include "tools.h"
@@ -13,11 +13,30 @@ void app(shop &shop);
 // main function
 int main() {
     reset_log();
-    tui::init_term(false, true);
+    tui::init_term(false);
 
     shop shop;
     try {
         app(shop);
+    } catch (int error) {
+        switch (error) {
+        case 1:
+            tui::cursor::visible(false);
+            tui::screen::clear();
+            print_msg("App crashed: File not found", {tui::screen::size().first / 2, tui::screen::size().second / 2 - (27 / 2) }); //yam    
+            print_msg("Press any key to quit.", {tui::screen::size().first / 2 + 1, tui::screen::size().second / 2 - 22 / 2}); //yam
+            std::cin.clear();
+            std::cin.get();
+            break;
+        default:
+            tui::cursor::visible(false);
+            tui::screen::clear();
+            print_msg("App crashed due to an unknown error", {tui::screen::size().first / 2, tui::screen::size().second / 2 - 35 / 2}); //yam    
+            print_msg("Press any key to quit.", {tui::screen::size().first / 2 + 1, tui::screen::size().second / 2 - 22 / 2}); //yam
+            std::cin.clear();
+            std::cin.get();
+            break;
+        }
     } catch (...) {
         tui::cursor::visible(false);
         tui::screen::clear();
