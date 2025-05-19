@@ -71,17 +71,17 @@ void app(shop &shop){
         while(input_handler.get_state() == input::States::Arrow) {
             switch (input_handler.get_arrow_state()) {
             case input::Arrows::Up:
-                if (--pos < 0) {
-                    pos = menu.size()-1;
+                if (pos == 0) {
+                    pos = menu.size();
                 }
-                printmenu(menu, pos);
+                printmenu(menu, --pos);
                 input_handler.get();
                 continue;            
             case input::Arrows::Down:
-                if (++pos == menu.size()) {
-                    pos = 0;
+                if (pos == menu.size() - 1) {
+                    pos = -1;
                 }
-                printmenu(menu, pos);
+                printmenu(menu, ++pos);
                 input_handler.get();
                 continue;
             case input::Arrows::Right:
