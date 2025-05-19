@@ -20,7 +20,6 @@ void printmenu(std::vector<std::string> &menu, size_t invert){
         } else {
             std::cout << menu[line];
         }
-        
     }
 }
 
@@ -57,96 +56,7 @@ std::vector<std::string> init_menu(std::vector<std::string> &v){
 
     return v;
 }
-std::string read_valid_char() {
-    std::string temp = "";
-    input in;
-    tui::cursor::visible(true);
-    while (in.get_state() != input::States::Enter) {
-        in.get();
-        print_log(concat("input was ", int(in.value())));
-        if (in.get_state() == input::States::Esc) {
-            print_log(concat("Esc detected"));
-            return "\0";
-        }
-        if (in.get_state() == input::States::Default) {
-            if (in.value() == SpecKey::Backspace && temp.size() > 0) {
-                tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second-1);
-                tui::screen::clear_line_right();
-                temp.pop_back();
-            } else {
-                temp.push_back(in.value());
-            }
-            std::cout << tui::string(in.value()).blue();
-        }
-    }
-    tui::cursor::visible(false);
-    print_log(concat("read valid input: '", temp, "'"));
-    return temp;
-}
-input::Arrows input::is_arrow (char &x) {
-    if(x == 27 && std::cin.peek() == 91) {
-        std::cin.ignore();
-        switch (std::cin.peek()) {
-        case 65:
-            std::cin.ignore();
-            return input::Arrows::Up;
-        case 66:
-            std::cin.ignore();
-            return input::Arrows::Down;
-        case 67:
-            std::cin.ignore();
-            return input::Arrows::Right;
-        case 68:
-            std::cin.ignore();
-            return input::Arrows::Left;
-        default:
-            std::cin.ignore();
-            std::cin.ignore();
-            std::cin.ignore();
-            std::cin.ignore();
-            return input::Arrows::Ctrl;
-        }
-    } else {    
-        return input::Arrows::None;
-    }
-}
 
-void input::get(){
-    std::cin.get(this->opt);
-    switch (this->is_arrow(this->opt)){
-    case input::Arrows::Up:
-        this->set(input::States::Arrow, '\0', input::Arrows::Up);
-        return;
-    case input::Arrows::Down:
-        this->set(input::States::Arrow, '\0', input::Arrows::Down);
-        return;
-    case input::Arrows::Left:
-        this->set(input::States::Arrow, '\0', input::Arrows::Left);
-        return;
-    case input::Arrows::Right:
-        this->set(input::States::Arrow, '\0', input::Arrows::Right);
-        return;
-    case input::Arrows::Ctrl:
-        this->set(input::States::Arrow, '\0', input::Arrows::Ctrl);
-        return;
-    case input::Arrows::None:
-        if (this->opt == 27) {
-            this->set(input::States::Esc, '\0', input::Arrows::None);
-            return;
-        }
-        if (this->opt == SpecKey::Enter){
-            this->set(input::States::Enter);
-            return;
-        } else if (this->opt < 0){
-            this->set(input::States::Bad);
-            // std::cin.clear();
-            return;
-        } else {
-            this->state = input::States::Default;
-            return;
-        }
-    }
-}
 std::string case_handling::make_prompt_string(tui::string &msg, std::pair<unsigned, unsigned> start_coords) {
     std::string temp;
     print_msg(msg, start_coords, false);
@@ -198,10 +108,10 @@ int case_handling::get_valid_amount(shop &shop, std::string &product_name, tui::
     return temp_int;
 }
 
-void custom_keys(input &in, std::unordered_map<char, mapper> keys){
-    auto key = keys.find(in.value());
-    if (key != keys.end()) {
-        in.set(key->second.state, key->second.value, key->second.arrow_state);
-    }
-}
+// void custom_keys(input &in, std::unordered_map<char, mapper> keys){
+//     auto key = keys.find(in.value());
+//     if (key != keys.end()) {
+//         in.set(key->second.state, key->second.value, key->second.arrow_state);
+//     }
+// }
 
