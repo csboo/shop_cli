@@ -3,7 +3,6 @@
 #include "external/cpptui/input.hpp"
 #include "shop.h"
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace case_handling {
@@ -19,7 +18,7 @@ namespace case_handling {
 //     char value = '\0';
 //     input::Arrows arrow_state = input::Arrows::None;
 // };
-void print_msg(std::string text, std::pair<unsigned, unsigned> coords = {2, 1}, bool save_cursor = true);
+void print_msg(const std::string &text, std::pair<unsigned, unsigned> coords = {2, 1}, bool save_cursor = true);
 void clear_msg();
 void printmenu(std::vector<std::string>& menu, size_t invert = 0);
 std::vector<std::string> init_menu(std::vector<std::string>& v);

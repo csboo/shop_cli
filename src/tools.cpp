@@ -15,7 +15,9 @@ std::string sajat_to_lower(std::string string) {
 
 int shop::binary_search_product_index(std::string& wanted_product) {
     int index = -1;
-    int begin = 0, end = this->products.size() - 1, mid = 0;
+    int begin = 0;
+    int end = this->products.size() - 1;
+    int mid = 0;
     // std::cerr << "start while for search\n";
     while (begin <= end && index == -1) {
         mid = begin + (end - begin) / 2;
@@ -46,7 +48,7 @@ void shop::sort_products_by_name() {
     }
 }
 bool global_logging = true;
-void print_log(std::string text) {
+void print_log(const std::string &text) {
     if (!global_logging) {
         return;
     }
