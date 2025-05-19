@@ -1,12 +1,13 @@
 #pragma once
 #include "product.h"
+#include <utility>
 #include <vector>
 
 class shop {
 public:
   shop() = default;
   void add_product(const std::string& name, double price, unsigned int instock);
-  inline void delete_product(std::string name) {
+  void delete_product(std::string name) {
     this->products.erase(this->products.begin() +
                          this->binary_search_product_index(name));
   }
@@ -22,10 +23,10 @@ public:
   void save_data();
 
   // getters
-  inline std::vector<product> get_products() { return this->products; }
+   std::vector<product> get_products() { return this->products; }
   // setters
-  inline void set_products(std::vector<product> products) {
-    this->products = products;
+   void set_products(std::vector<product> products) {
+    this->products = std::move(products);
   }
 
 private:

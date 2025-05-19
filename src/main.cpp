@@ -4,7 +4,6 @@
 #include "shop.h"
 #include "tools.h"
 #include <cstddef>
-#include <fcntl.h>
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -21,35 +20,32 @@ int main() {
     try {
         app(shop);
     } catch (int error) {
-        switch (error) {
-        case 1:
+        if (error == 1) {
             tui::cursor::visible(false);
             tui::screen::clear();
             print_msg("App crashed: File not found",
-                      {tui::screen::size().first / 2, tui::screen::size().second / 2 - (27 / 2)}); // yam
+                      {tui::screen::size().first / 2, (tui::screen::size().second / 2) - (27 / 2)}); // yam
             print_msg("Press any key to quit.",
-                      {tui::screen::size().first / 2 + 1, tui::screen::size().second / 2 - 22 / 2}); // yam
+                      {(tui::screen::size().first / 2) + 1, (tui::screen::size().second / 2) - (22 / 2)}); // yam
             std::cin.clear();
             std::cin.get();
-            break;
-        default:
+        } else {
             tui::cursor::visible(false);
             tui::screen::clear();
             print_msg("App crashed due to an unknown error",
-                      {tui::screen::size().first / 2, tui::screen::size().second / 2 - 35 / 2}); // yam
+                      {tui::screen::size().first / 2, (tui::screen::size().second / 2) - (35 / 2)}); // yam
             print_msg("Press any key to quit.",
-                      {tui::screen::size().first / 2 + 1, tui::screen::size().second / 2 - 22 / 2}); // yam
+                      {(tui::screen::size().first / 2) + 1, (tui::screen::size().second / 2) - (22 / 2)}); // yam
             std::cin.clear();
             std::cin.get();
-            break;
         }
     } catch (...) {
         tui::cursor::visible(false);
         tui::screen::clear();
         print_msg("App crashed due to an unknown error",
-                  {tui::screen::size().first / 2, tui::screen::size().second / 2 - 35 / 2}); // yam
+                  {tui::screen::size().first / 2, (tui::screen::size().second / 2) - (35 / 2)}); // yam
         print_msg("Press any key to quit.",
-                  {tui::screen::size().first / 2 + 1, tui::screen::size().second / 2 - 22 / 2}); // yam
+                  {(tui::screen::size().first / 2) + 1, (tui::screen::size().second / 2) - (22 / 2)}); // yam
         std::cin.clear();
         std::cin.get();
     }
@@ -96,20 +92,12 @@ void app(shop& shop) {
                 break;
             case Arrow::Left:
             default:
-                input_handler = Input();
+                // input_handler = Input();
                 break;
             };
-        }
-        if (input_handler == SpecKey::Enter) {
-            // input_handler.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at
-            // char(48), which is 0
-            auto ch_at = pos + 1 + 48;
-            input_handler = ch_at;
-        }
-        if (input_handler.is_ch) {
+        } else if (input_handler.is_ch) {
             tui::string msg = "";
-            std::string str_rsp = "";
-            std::string str_rsp2 = "";
+            std::string str_rsp;
             int int_rsp = 0;
             int int_rsp2 = 0;
             switch (input_handler.ch) {
@@ -118,7 +106,8 @@ void app(shop& shop) {
                 tui::cursor::home();
 
                 msg = "What product would you like to add?";
-                str_rsp = case_handling::make_prompt_string(msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
+                str_rsp =
+                    case_handling::make_prompt_string(msg, {6, (tui::screen::size().second / 2) - (msg.size() / 2)});
                 if (str_rsp == "\0") {
                     input_handler = SpecKey::Esc;
                     // std::cin.ignore();
@@ -144,7 +133,7 @@ void app(shop& shop) {
 
                 msg = "Which product would you like to delete?";
                 str_rsp =
-                    case_handling::get_valid_name(shop, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
+                    case_handling::get_valid_name(shop, msg, {6, (tui::screen::size().second / 2) - (msg.size() / 2)});
 
                 shop.delete_product(str_rsp);
                 printmenu(menu, pos);
@@ -156,12 +145,12 @@ void app(shop& shop) {
 
                 msg = "Which product would you like to sell?";
                 str_rsp =
-                    case_handling::get_valid_name(shop, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
+                    case_handling::get_valid_name(shop, msg, {6, (tui::screen::size().second / 2) - (msg.size() / 2)});
 
                 msg = "Please enter the amount to sell:";
                 int_rsp = case_handling::get_valid_amount(
                     shop, str_rsp, msg,
-                    {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
+                    {tui::cursor::get_position().first + 2, (tui::screen::size().second / 2) - (msg.size() / 2)});
 
                 shop.sell(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -173,12 +162,12 @@ void app(shop& shop) {
 
                 msg = "Which product would you like to restock?";
                 str_rsp =
-                    case_handling::get_valid_name(shop, msg, {6, tui::screen::size().second / 2 - msg.size() / 2});
+                    case_handling::get_valid_name(shop, msg, {6, (tui::screen::size().second / 2) - (msg.size() / 2)});
 
                 msg = "Please enter the amount to restock:";
                 int_rsp = case_handling::get_valid_amount(
                     shop, str_rsp, msg,
-                    {tui::cursor::get_position().first + 2, tui::screen::size().second / 2 - msg.size() / 2});
+                    {tui::cursor::get_position().first + 2, (tui::screen::size().second / 2) - (msg.size() / 2)});
 
                 shop.restock(str_rsp, int_rsp);
                 printmenu(menu, pos);
@@ -199,7 +188,7 @@ void app(shop& shop) {
                 msg = "Which product would you like list?";
                 str_rsp = case_handling::get_valid_name(
                     shop, msg,
-                    {tui::cursor::get_position().first + 6, tui::screen::size().second / 2 - msg.size() / 2});
+                    {tui::cursor::get_position().first + 6, (tui::screen::size().second / 2) - (msg.size() / 2)});
 
                 tui::screen::clear();
                 shop.list_specific_product(str_rsp);
@@ -223,14 +212,14 @@ void app(shop& shop) {
                 print_log("ByeBye");
                 break;
             };
-        }
-        if (input_handler == SpecKey::Esc) {
+        } else if (input_handler == SpecKey::Esc) {
             print_msg(tui::string("\tOperation canceled").blue());
             continue;
+        } else if (input_handler == SpecKey::Enter) {
+            // int to char convertion, numeric chars start at char(48), which is 0
+            auto ch_at = pos + 1 + 48;
+            input_handler = ch_at;
         }
-        // if (input_handler == input::States::Bad) {
         print_msg(tui::string("\tWrong input").red());
-        continue;
-        // }
     }
 }
