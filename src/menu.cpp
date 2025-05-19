@@ -1,20 +1,22 @@
 #include "menu.h"
 #include "../external/cpptui/tui.hpp"
+#include "../external/cpptui/input.hpp"
 #include "shop.h"
 #include "tools.h"
+#include <cstddef>
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-void printmenu(std::vector<std::string> &menu, int invert){
+void printmenu(std::vector<std::string> &menu, size_t invert){
     tui::screen::clear();
     tui::cursor::home();
     tui::cursor::visible(false);
-    std::cout << tui::tui_string("\n\r\n\r\n\r\tValasszon opciot:\n\r\n\r").bold();
-    for (auto line = 0; line < menu.size(); line++) {
+    std::cout << tui::string("\n\r\n\r\n\r\tValasszon opciot:\n\r\n\r").bold();
+    for (size_t line = 0; line < menu.size(); line++) {
         if (line == invert){
-            std::cout << tui::tui_string(menu[line]).inverted();
+            std::cout << tui::string(menu[line]).inverted();
         } else {
             std::cout << menu[line];
         }
@@ -33,13 +35,13 @@ void print_msg(std::string text, std::pair<unsigned, unsigned> coords, bool save
     tui::cursor::set_position(coords.first, coords.second);
     tui::screen::clear_line();
     std::cout << text; 
-    tui::cursor::set_position(pos);
+    tui::cursor::set_position(pos.first, pos.second);
 }
 void clear_msg(){
     std::pair<unsigned, unsigned> pos = tui::cursor::get_position();
     tui::cursor::set_position(2, 1);
     tui::screen::clear_line();
-    tui::cursor::set_position(pos);
+    tui::cursor::set_position(pos.first, pos.second);
 }
 
 std::vector<std::string> init_menu(std::vector<std::string> &v){
@@ -67,14 +69,14 @@ std::string read_valid_char() {
             return "\0";
         }
         if (in.get_state() == input::States::Default) {
-            if (in.value() == tui::chars::BACKSPACE && temp.size() > 0) {
+            if (in.value() == SpecKey::Backspace && temp.size() > 0) {
                 tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second-1);
                 tui::screen::clear_line_right();
                 temp.pop_back();
             } else {
                 temp.push_back(in.value());
             }
-            std::cout << tui::tui_string(in.value()).blue();
+            std::cout << tui::string(in.value()).blue();
         }
     }
     tui::cursor::visible(false);
@@ -132,7 +134,7 @@ void input::get(){
             this->set(input::States::Esc, '\0', input::Arrows::None);
             return;
         }
-        if (this->opt == tui::chars::ENTER){
+        if (this->opt == SpecKey::Enter){
             this->set(input::States::Enter);
             return;
         } else if (this->opt < 0){
@@ -145,7 +147,7 @@ void input::get(){
         }
     }
 }
-std::string case_handling::make_prompt_string(tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+std::string case_handling::make_prompt_string(tui::string &msg, std::pair<unsigned, unsigned> start_coords) {
     std::string temp;
     print_msg(msg, start_coords, false);
     tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
@@ -153,10 +155,10 @@ std::string case_handling::make_prompt_string(tui::tui_string &msg, std::pair<un
     print_log(concat("returned str was: '", temp, "'"));
     return temp;
 }
-int case_handling::make_prompt_int(tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords) {
+int case_handling::make_prompt_int(tui::string &msg, std::pair<unsigned, unsigned> start_coords) {
     std::string temp_str;
     int temp_int = 0;
-    tui::cursor::set_position(start_coords);
+    tui::cursor::set_position(start_coords.first, start_coords.second);
     print_msg(msg, {tui::cursor::get_position().first, tui::screen::size().second / 2 - msg.size() / 2}, false);
     tui::cursor::set_position(tui::cursor::get_position().first + 2, tui::cursor::get_position().second - (msg.size()) + 4);
     temp_str = read_valid_char();
@@ -164,7 +166,7 @@ int case_handling::make_prompt_int(tui::tui_string &msg, std::pair<unsigned, uns
         try {
             temp_int = stoi(temp_str);
         } catch (std::invalid_argument) {
-            print_msg(tui::tui_string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
+            print_msg(tui::string("Invalid number").red(), {2, tui::screen::size().second / 2 - 8}); //magicnumber
             tui::cursor::set_position(tui::cursor::get_position().first, tui::cursor::get_position().second - temp_str.size());
             tui::screen::clear_line_right();
             temp_str = read_valid_char();
@@ -172,19 +174,19 @@ int case_handling::make_prompt_int(tui::tui_string &msg, std::pair<unsigned, uns
     }
     return temp_int;
 }
-std::string case_handling::get_valid_name(shop &shop, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
+std::string case_handling::get_valid_name(shop &shop, tui::string &msg, std::pair<unsigned, unsigned> start_coords){
     std::string temp_str = case_handling::make_prompt_string(msg, start_coords);
     while(shop.binary_search_product_index(temp_str) == -1){
         tui::screen::clear_line();
-        print_msg(tui::tui_string(concat(temp_str, " does not exist")).red(), {2, tui::screen::size().second / 2 - (temp_str.size() / 2 + 15 / 2)}); //yam yam (Yet Another Magicnumber)
+        print_msg(tui::string(concat(temp_str, " does not exist")).red(), {2, tui::screen::size().second / 2 - (temp_str.size() / 2 + 15 / 2)}); //yam yam (Yet Another Magicnumber)
         temp_str = make_prompt_string(msg, start_coords);
     }
     return temp_str;
 }
 
-int case_handling::get_valid_amount(shop &shop, std::string &product_name, tui::tui_string &msg, std::pair<unsigned, unsigned> start_coords){
-    int temp_int = case_handling::make_prompt_int(msg, start_coords);
-    tui::tui_string error_msg;
+int case_handling::get_valid_amount(shop &shop, std::string &product_name, tui::string &msg, std::pair<unsigned, unsigned> start_coords){
+    size_t temp_int = case_handling::make_prompt_int(msg, start_coords);
+    tui::string error_msg;
     while(shop.get_products().at(shop.binary_search_product_index(product_name)).get_instock() < temp_int){
         temp_int < 0 ? 
                     error_msg = "Invalid number" :

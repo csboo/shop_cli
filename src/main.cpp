@@ -1,7 +1,10 @@
 #include "../external/cpptui/tui.hpp"
+#include "external/cpptui/input.hpp"
 #include "menu.h"
 #include "shop.h"
 #include "tools.h"
+#include <cstddef>
+#include <fcntl.h>
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -13,8 +16,7 @@ void app(shop &shop);
 // main function
 int main() {
     reset_log();
-    tui::init_term(false);
-
+    tui::init(false);
     shop shop;
     try {
         app(shop);
@@ -46,15 +48,15 @@ int main() {
         std::cin.get();
     }
 
-    tui::reset_term();
+    tui::reset();
     return 0;
 }
 void app(shop &shop){
     std::vector<std::string> menu;
     init_menu(menu);
-    printmenu(menu);
     input input_handler;
-    int pos=0;
+    size_t pos=0;
+    printmenu(menu, pos);
     while (input_handler.value() != 'q'){
         input_handler.get();
         print_log(concat("Starting with state(Def, Arr, Ent, Bad, Esc): ", input_handler.get_state()));
@@ -96,7 +98,7 @@ void app(shop &shop){
             input_handler.set(input::States::Default, pos + 1 + 48); //int to char convertion, numeric chars start at char(48), which is 0
         } 
         if(input_handler.get_state() == input::States::Default){
-            tui::tui_string msg = "";
+            tui::string msg = "";
             std::string str_rsp = "";
             std::string str_rsp2 = "";
             int int_rsp = 0;
@@ -123,7 +125,7 @@ void app(shop &shop){
 
                 shop.add_product(str_rsp, int_rsp, int_rsp2);
                 printmenu(menu, pos);
-                print_msg(tui::tui_string(concat("\t", str_rsp, " added successfully")).green());
+                print_msg(tui::string(concat("\t", str_rsp, " added successfully")).green());
                 break;
             case '2':
                 tui::screen::clear();
@@ -134,7 +136,7 @@ void app(shop &shop){
 
                 shop.delete_product(str_rsp);
                 printmenu(menu, pos);
-                print_msg(tui::tui_string(concat("\t", str_rsp, " deleted successfully")).green());
+                print_msg(tui::string(concat("\t", str_rsp, " deleted successfully")).green());
                 break;
             case '3':
                 tui::screen::clear();
@@ -148,7 +150,7 @@ void app(shop &shop){
 
                 shop.sell(str_rsp, int_rsp);
                 printmenu(menu, pos);
-                print_msg(tui::tui_string(concat("\tSuccessfully sold ", int_rsp, " of " ,str_rsp)).green());
+                print_msg(tui::string(concat("\tSuccessfully sold ", int_rsp, " of " ,str_rsp)).green());
                 break;
             case '4':
                 tui::screen::clear();
@@ -162,7 +164,7 @@ void app(shop &shop){
 
                 shop.restock(str_rsp, int_rsp);
                 printmenu(menu, pos);
-                print_msg(tui::tui_string(concat("\tSuccessfully restocked ", int_rsp, " of " ,str_rsp)).green());
+                print_msg(tui::string(concat("\tSuccessfully restocked ", int_rsp, " of " ,str_rsp)).green());
                 break;
             case '5':
                 tui::screen::clear();
@@ -186,11 +188,11 @@ void app(shop &shop){
                 break;
             case '7':
                 shop.save_data(); 
-                print_msg(tui::tui_string("\tFile saved successfully").green());
+                print_msg(tui::string("\tFile saved successfully").green());
                 break;
             case '8':
                 shop.load_data();
-                print_msg(tui::tui_string("\tFile loaded successfully").green());
+                print_msg(tui::string("\tFile loaded successfully").green());
                 break;
             case '9':
                 input_handler.set(input::States::Default, 'q');
@@ -202,11 +204,11 @@ void app(shop &shop){
             };
         }
         if (input_handler.get_state() == input::States::Bad) {
-            print_msg(tui::tui_string("\tWrong input").red());
+            print_msg(tui::string("\tWrong input").red());
             continue;
         }   
         if (input_handler.get_state() == input::States::Esc) {
-            print_msg(tui::tui_string("\tOperation canceled").blue());
+            print_msg(tui::string("\tOperation canceled").blue());
             continue;
         }
     }

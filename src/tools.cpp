@@ -1,6 +1,6 @@
 #include <algorithm>
+#include <cstddef>
 #include <fstream>
-#include <sstream>
 #include <string>
 #include "shop.h"
 
@@ -38,9 +38,9 @@ int shop::binary_search_product_index(std::string &wanted_product) {
 void shop::sort_products_by_name() {
     int min = 0;
 
-    for (int i = 0; i < this->products.size() - 1; i++) {
+    for (size_t i = 0; i < this->products.size() - 1; i++) {
         min = i;
-        for (int j = i + 1; j < this->products.size(); j++) {
+        for (size_t j = i + 1; j < this->products.size(); j++) {
             if (sajat_to_lower(this->products.at(j).get_name()) <
                 sajat_to_lower(this->products.at(min).get_name())) {
                 min = j;
