@@ -8,3 +8,6 @@ raktar.txt
 shop
 jero_bolt/
 external/
+setup.sh
+compile_commands.json
+.cache
