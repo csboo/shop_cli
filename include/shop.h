@@ -1,6 +1,5 @@
 #pragma once
 #include "product.h"
-#include <cstdlib>
 #include <vector>
 
 class shop {

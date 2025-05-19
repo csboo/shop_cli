@@ -7,8 +7,8 @@ class product{
     product(std::string name = "", double price = 0, unsigned int instock = 0);
     //getters
     inline const std::string get_name() const {return this->name;}
-    inline const double get_price() const {return this->price;}
-    inline const unsigned int get_instock() const {return this->instock;}
+    inline double get_price() const {return this->price;}
+    inline unsigned int get_instock() const {return this->instock;}
     //setters
     inline void set_name(std::string& name){this->name = name;}
     inline void set_price(double price){this->price = price;}
